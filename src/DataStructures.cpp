@@ -435,7 +435,7 @@ void Multisets()
     std::multiset<Type, TypeLess>::iterator insertedElementIt = set.insert(Type(6)); 
     insertedElementIt = set.emplace(9);
 
-    std::printf("Set: ");
+    std::printf("Multiset: ");
     PrintContainerType(set);
     std::printf("\n\n");
 
