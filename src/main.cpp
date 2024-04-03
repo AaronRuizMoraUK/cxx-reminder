@@ -7,7 +7,7 @@ void Queues();
 void Deques();
 void Sets();
 
-void main(int argc, char* argsv[])
+int main(int argc, char* argsv[])
 {
     std::printf("C++ Reminder\n\n");
 
@@ -22,4 +22,6 @@ void main(int argc, char* argsv[])
     Deques();
 
     Sets();
+
+    return 0;
 }
