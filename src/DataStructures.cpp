@@ -10,12 +10,21 @@
 
 namespace
 {
-    template<typename T>
+    template<class T>
     void PrintContainer(const T& container)
     {
         for (const auto& element : container)
         {
             std::printf("%d ", element);
+        }
+    }
+
+    template<class T>
+    void PrintContainerType(const T& container)
+    {
+        for (const auto& element : container)
+        {
+            std::printf("%d ", element.getValue());
         }
     }
 
@@ -174,7 +183,7 @@ void Arrays()
 // + Good for add/delete at the BEGINNING and END, because it has pointers to front and back elements.
 //      push_front, pop_front, push_back, pop_back
 // + Good for insertion and deletion of elements once having the iterator. Otherwise a search is needed, which is slow.
-//      insert, erase, clear, assign
+//      insert, erase, remove, clear, assign
 
 void LinkedLists()
 {
@@ -206,6 +215,10 @@ void LinkedLists()
     // Erase elements at specific position using iterator. Fast.
     std::list<int>::iterator afterErasedIt = linkedList.erase(linkedList.begin());
     std::list<int>::iterator afterErasedRangeIt = linkedList.erase(linkedList.begin(), linkedList.begin()++); // Removes elements in [first, last) range
+
+    // Remove elements. Slow as it needs to search it.
+    linkedList.remove(4); // Remove all elements of value 4.
+    linkedList.remove_if([](int element) { return element > 4; }); // Remove all elements larger than 4.
 
     std::list<int>::iterator founddIt = std::find(linkedList.begin(), linkedList.end(), 3);
 
@@ -371,9 +384,70 @@ void Deques()
 // Insert: O(log n)
 // Delete: O(log n)
 //
+// + Element access needs to do a search in the tree, but O(log n) is not terrible.
+//      find
+// - Elements not continuos in memory, bad for cache when iterating through elements.
+//      begin, end (with ++/-- operators only)
+// + Good for insertion and deletion of elements
+//      insert, erase, extract, clear
 
 void Sets()
 {
-    std::set<Type, TypeLess> set = { Type(1),Type(2), Type(3), Type(4) };
+    std::set<Type, TypeLess> set = {Type(4), Type(3), Type(2), Type(1)};
 
+    // Insert elements. Fast.
+    std::pair<std::set<Type, TypeLess>::iterator, bool> insertedElementIt = set.insert(Type(6)); // pair.bool is false as it's new element.
+    insertedElementIt = set.insert(Type(6)); // pair.bool is true as it's already inserted.
+    insertedElementIt = set.emplace(9);
+
+    std::printf("Set: ");
+    PrintContainerType(set);
+    std::printf("\n\n");
+
+    // Erase elements at specific position using iterator. Fast.
+    std::set<Type, TypeLess>::iterator afterErasedIt = set.erase(set.begin());
+    std::set<Type, TypeLess>::iterator afterErasedRangeIt = set.erase(set.begin(), set.begin()++); // Removes elements in [first, last) range
+
+    // Remove element from the set and obtain it as node type.
+    auto nodeExtracted = set.extract(set.begin());
+    auto nodeExtracted2 = set.extract(Type(9));
+
+    std::set<Type, TypeLess>::iterator findIt = set.find(Type(3));
+
+    set.clear(); // Removes all the elements.
+}
+
+// Multisets
+// 
+// Same as set but it allows to repeate elements.
+//
+// Access: N/A
+// Search: O(log n)
+// Insert: O(log n)
+// Delete: O(log n)
+
+void Multisets()
+{
+    std::multiset<Type, TypeLess> set = { Type(4), Type(3), Type(3), Type(2), Type(1), Type(1) };
+
+    // Insert elements. Fast.
+    std::multiset<Type, TypeLess>::iterator insertedElementIt = set.insert(Type(6)); 
+    insertedElementIt = set.emplace(9);
+
+    std::printf("Set: ");
+    PrintContainerType(set);
+    std::printf("\n\n");
+
+    // Erase elements at specific position using iterator. Fast.
+    std::set<Type, TypeLess>::iterator afterErasedIt = set.erase(set.begin());
+    std::set<Type, TypeLess>::iterator afterErasedRangeIt = set.erase(set.begin(), set.begin()++); // Removes elements in [first, last) range
+
+    // Remove element from the set and obtain it as node type
+    auto nodeExtracted = set.extract(set.begin());
+    auto nodeExtracted2 = set.extract(Type(9));
+
+    // If there are several elements with the requested key in the container, any of them may be returned.
+    std::set<Type, TypeLess>::iterator findIt = set.find(Type(3));
+
+    set.clear(); // Removes all the elements.
 }
