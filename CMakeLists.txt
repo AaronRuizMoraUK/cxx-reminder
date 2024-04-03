@@ -5,6 +5,7 @@ project(cxx-reminder)
 set(SOURCE_FILE_LIST
     src/main.cpp
     src/DataStructures.cpp
+    src/Algorithms.cpp
     src/Concurrency.cpp
     src/Cxx11.cpp
     src/Cxx14.cpp
