@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.0)
 project(cxx-reminder)
 
 set(SOURCE_FILE_LIST
-    src/Main.cpp
+    src/main.cpp
     src/DataStructures.cpp
     src/Concurrency.cpp
     src/Cxx11.cpp
