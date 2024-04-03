@@ -416,39 +416,31 @@ void Sets()
     std::set<Type, TypeLess>::iterator findIt = set.find(Type(3));
 
     set.clear(); // Removes all the elements.
-}
 
-// Multisets
-// 
-// Same as set but it allows to repeate elements.
-//
-// Access: N/A
-// Search: O(log n)
-// Insert: O(log n)
-// Delete: O(log n)
+    // ---------------------------
+    // Multisets
+    // Same as set but it allows to repeate elements.
 
-void Multisets()
-{
-    std::multiset<Type, TypeLess> set = { Type(4), Type(3), Type(3), Type(2), Type(1), Type(1) };
+    std::multiset<Type, TypeLess> multiset = { Type(4), Type(3), Type(3), Type(2), Type(1), Type(1) };
 
     // Insert elements. Fast.
-    std::multiset<Type, TypeLess>::iterator insertedElementIt = set.insert(Type(6)); 
-    insertedElementIt = set.emplace(9);
+    std::multiset<Type, TypeLess>::iterator insertedElementIt2 = multiset.insert(Type(6));
+    insertedElementIt2 = multiset.emplace(9);
 
     std::printf("Multiset: ");
-    PrintContainerType(set);
+    PrintContainerType(multiset);
     std::printf("\n\n");
 
     // Erase elements at specific position using iterator. Fast.
-    std::set<Type, TypeLess>::iterator afterErasedIt = set.erase(set.begin());
-    std::set<Type, TypeLess>::iterator afterErasedRangeIt = set.erase(set.begin(), set.begin()++); // Removes elements in [first, last) range
+    std::multiset<Type, TypeLess>::iterator afterErasedIt2 = multiset.erase(multiset.begin());
+    std::multiset<Type, TypeLess>::iterator afterErasedRangeIt2 = multiset.erase(multiset.begin(), multiset.begin()++); // Removes elements in [first, last) range
 
     // Remove element from the set and obtain it as node type
-    auto nodeExtracted = set.extract(set.begin());
-    auto nodeExtracted2 = set.extract(Type(9));
+    auto nodeExtracted3 = multiset.extract(multiset.begin());
+    auto nodeExtracted4 = multiset.extract(Type(9));
 
     // If there are several elements with the requested key in the container, any of them may be returned.
-    std::set<Type, TypeLess>::iterator findIt = set.find(Type(3));
+    std::multiset<Type, TypeLess>::iterator findIt2 = multiset.find(Type(3));
 
-    set.clear(); // Removes all the elements.
+    multiset.clear(); // Removes all the elements.
 }

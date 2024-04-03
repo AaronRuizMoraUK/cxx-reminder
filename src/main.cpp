@@ -6,7 +6,6 @@ void Stacks();
 void Queues();
 void Deques();
 void Sets();
-void Multisets();
 
 int main(int argc, char* argsv[])
 {
@@ -19,7 +18,6 @@ int main(int argc, char* argsv[])
     Queues();
     Deques();
     Sets();
-    Multisets();
 
     return 0;
 }
