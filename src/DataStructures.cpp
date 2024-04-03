@@ -167,7 +167,7 @@ void Arrays()
 // 
 // A collection of nodes that together form a sequence. Each node contains data and
 // a pointer to the next node in the sequence. There are several types of linked lists,
-// including single linked lists, double linked lists (std::list), and circular linked lists.
+// including singly linked lists, doubly linked lists (std::list), and circular linked lists.
 // 
 // Bad for access and memory, good for modification.
 //
@@ -376,6 +376,7 @@ void Deques()
 // It cannot have repeated elements.
 // 
 // Underneath it's implemented as a balanced binary search tree, such as red-back tree.
+// https://algorithmtutor.com/Data-Structures/Tree/Red-Black-Trees/
 // 
 // Bad for direct access and memory, good for searches and modifications.
 //
