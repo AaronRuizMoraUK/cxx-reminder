@@ -3,6 +3,7 @@
 #include <array>
 #include <vector>
 #include <list>
+#include <forward_list>
 #include <stack>
 #include <queue>
 #include <deque>
@@ -177,7 +178,8 @@ void Arrays()
 // 
 // A collection of nodes that together form a sequence. Each node contains data and
 // a pointer to the next node in the sequence. There are several types of linked lists,
-// including singly linked lists, doubly linked lists (std::list), and circular linked lists.
+// including singly linked lists (std::forward_list), doubly linked lists (std::list)
+// and circular linked lists.
 // 
 // Bad for access and memory, good for modification.
 //
@@ -197,6 +199,7 @@ void Arrays()
 
 void LinkedLists()
 {
+    // Doubly Linked List (std::list)
     std::list<int> linkedList = {1, 2, 3, 4, 5};
     std::list<int> linkedList2(5, 1); ; // {1, 1, 1, 1, 1}
 
@@ -236,6 +239,54 @@ void LinkedLists()
     std::list<int>::iterator founddIt = std::find(linkedList.begin(), linkedList.end(), 3);
 
     linkedList.clear(); // Removes all the elements.
+
+    // ---------------------------
+    // Singly Linked List (std::forward_list)
+    // Same as std::list but it can only traver forward and add/delete at front (not back) of the list.
+    // It uses less memory per element as it only has 1 pointer to the next element.
+    //
+    // Access: O(1) at the beginning, O(n) in the middle/end
+    // Search: O(n)
+    // Insert: O(1) at the beginning, O(n) in the middle/end
+    // Delete: O(1) at the beginning, O(n) in the middle/end
+
+    std::forward_list<int> forwardLinkedList = { 1, 2, 3, 4, 5 };
+    std::forward_list<int> forwardLinkedList2(5, 1); ; // {1, 1, 1, 1, 1}
+
+    // Add elements at the beginnig. Fast.
+    forwardLinkedList.push_front(3);
+
+    int front2 = forwardLinkedList.front();
+
+    // Insert elements at specific position using iterator. Fast.
+    std::forward_list<int>::iterator firstInsertedElementIt2 = forwardLinkedList.insert_after(forwardLinkedList.begin(), 2);
+
+    // Splice moves elements from one list to another into a specific location, same as insert but moving.
+    forwardLinkedList.splice_after(forwardLinkedList.begin(), forwardLinkedList2);
+
+    // Assign entire list
+    forwardLinkedList.assign(5, 1); // {1, 1, 1, 1, 1}
+    forwardLinkedList.assign({ 1, 2, 3, 4, 5 });
+
+    std::printf("Forward Linked List: ");
+    PrintContainer(forwardLinkedList);
+    std::printf("\n\n");
+
+    // Remove elements at the begnning. Fast.
+    forwardLinkedList.pop_front();
+
+    // Erase elements at specific position using iterator. Fast.
+    std::forward_list<int>::iterator afterErasedIt2 = forwardLinkedList.erase_after(forwardLinkedList.before_begin()); // Removes first element
+    afterErasedIt2 = forwardLinkedList.erase_after(forwardLinkedList.begin()); // Removes element AFTER the iterator
+    std::forward_list<int>::iterator afterErasedRangeIt2 = forwardLinkedList.erase_after(forwardLinkedList.before_begin(), forwardLinkedList.begin()++); // Removes elements in (first, last) range
+
+    // Remove elements. Slow as it needs to search it.
+    forwardLinkedList.remove(4); // Remove all elements of value 4.
+    forwardLinkedList.remove_if([](int element) { return element > 4; }); // Remove all elements larger than 4.
+
+    std::forward_list<int>::iterator founddIt2 = std::find(forwardLinkedList.begin(), forwardLinkedList.end(), 3);
+
+    forwardLinkedList.clear(); // Removes all the elements.
 }
 
 // Stacks
