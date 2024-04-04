@@ -4,6 +4,7 @@ void Arrays();
 void LinkedLists();
 void Stacks();
 void Queues();
+void PriorityQueues();
 void Deques();
 void Sets();
 void Maps();
@@ -19,6 +20,7 @@ int main(int argc, char* argsv[])
     LinkedLists();
     Stacks();
     Queues();
+    PriorityQueues();
     Deques();
     Sets();
     Maps();

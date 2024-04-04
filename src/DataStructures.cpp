@@ -372,6 +372,64 @@ void Queues()
     std::printf("\n\n");
 }
 
+// Priority Queues
+// 
+// A linear data structure that that provides constant time lookup of the largest (or smallest, 
+// depending on the comparator) element, at the expense of logarithmic insertion and extraction. 
+// It is typically implemented using a heap data structure, such as a binary heap.
+// 
+// Good for access to top element (largest or smallest), not possible to access/modify any other elements.
+//
+// Access(top element): O(1)
+// Search: N/A
+// Insert(push): O(log n)
+// Delete(pop top): O(log n)
+//
+// + Access to top element (largest or smallest) is fast
+//      top
+// - Not possible to access to any other element, as there are no iterators.
+// + Good for add new elements and removing top element.
+//      push, pop
+// - Not possible for deletion except from top.
+
+void PriorityQueues()
+{
+    // Max priority queue
+    std::priority_queue<int> maxQueue;
+
+    maxQueue.push(1);
+    maxQueue.push(2);
+    maxQueue.push(3);
+    maxQueue.push(4);
+
+    int max = maxQueue.top();
+
+    std::printf("Priority Queue (max): ");
+    while (!maxQueue.empty()) {
+        std::printf("%d ", maxQueue.top());
+        maxQueue.pop();
+    }
+    std::printf("\n\n");
+
+    // -------------------
+    // Min priority queue
+    std::priority_queue<int, std::vector<int>, std::greater<int>> minQueue;
+
+    minQueue.push(1);
+    minQueue.push(2);
+    minQueue.push(3);
+    minQueue.push(4);
+
+    int min = minQueue.top();
+
+    std::printf("Priority Queue (min): ");
+    while (!minQueue.empty()) {
+        std::printf("%d ", minQueue.top());
+        minQueue.pop();
+    }
+    std::printf("\n\n");
+}
+
 // Deques
 // 
 // A double-ended queue is a queue that can add/delete at both beginning and end.
