@@ -15,6 +15,7 @@ void Threads();
 void Mutex();
 void LockMultipleMutex();
 void SharedMutex();
+void Atomics();
 
 int main(int argc, char* argsv[])
 {
@@ -37,6 +38,7 @@ int main(int argc, char* argsv[])
     Mutex();
     LockMultipleMutex();
     SharedMutex();
+    Atomics();
 
     return 0;
 }

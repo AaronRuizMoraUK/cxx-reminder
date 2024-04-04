@@ -161,7 +161,7 @@ void Mutex()
     runFunc(MainMutexUsingUniqueLock);
 }
 
-// How to lock multiple mutexex?
+// Locking multiple mutex safely
 
 void LockMultipleMutex()
 {
@@ -356,4 +356,47 @@ void SharedMutex()
     }
 
     printf("Main Thread) Threads finished. Counter: %d\n\n", sharedCounter.Get());
+}
+
+// Atomics
+//
+// Types that encapsulate values and guarantee atomic operations to prevent data races.
+// Useful for lock-free concurrent programming.
+// Usual operations are load, store, increment, decrement, add, substract.
+// It supports many basic types: https://en.cppreference.com/w/cpp/atomic/atomic
+
+void Atomics()
+{
+    std::atomic_int atomicCounter(0); // alias of std::atomic<int>
+
+    auto increment = [&atomicCounter](int n)
+        {
+            for (int i = 0; i < n; ++i)
+            {
+                atomicCounter++;
+            }
+        };
+
+    const int numThreads = 10;
+
+    printf("Main Thread) Creating %d threads... \n", numThreads);
+
+    // Create and run new threads executing 'ThreadMain'
+    std::vector<std::unique_ptr<std::thread>> threads;
+    threads.reserve(numThreads);
+    for (int i = 0; i < numThreads; ++i)
+    {
+        threads.push_back(
+            std::make_unique<std::thread>(increment, 333));
+    }
+
+    printf("Main Thread) Waiting for threads to finish...\n");
+
+    // Wait until threads have finished execution.
+    for (auto& thread : threads)
+    {
+        thread->join();
+    }
+
+    printf("Main Thread) Threads finished. Counter: %d\n\n", atomicCounter.load());
 }
