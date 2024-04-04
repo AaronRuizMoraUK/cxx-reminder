@@ -11,6 +11,11 @@ void Maps();
 void UnorderedSets();
 void UnorderedMaps();
 
+void Threads();
+void Mutex();
+void LockMultipleMutex();
+void SharedMutex();
+
 int main(int argc, char* argsv[])
 {
     std::printf("C++ Reminder\n\n");
@@ -26,6 +31,12 @@ int main(int argc, char* argsv[])
     Maps();
     UnorderedSets();
     UnorderedMaps();
+
+    // Concurrency
+    Threads();
+    Mutex();
+    LockMultipleMutex();
+    SharedMutex();
 
     return 0;
 }

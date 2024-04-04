@@ -7,6 +7,7 @@ set(SOURCE_FILE_LIST
     src/DataStructures.cpp
     src/Algorithms.cpp
     src/Concurrency.cpp
+    src/Streams.cpp
     src/Cxx11.cpp
     src/Cxx14.cpp
     src/Cxx17.cpp
