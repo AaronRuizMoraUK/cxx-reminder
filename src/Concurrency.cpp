@@ -65,6 +65,7 @@ void Threads()
 
 int g_counter = 0;
 std::mutex g_mutex;
+std::recursive_mutex g_recursiveMutex;
 
 void MainMutex(int id, int increment)
 {
@@ -87,6 +88,23 @@ void MainMutexUsingLock(int id, int increment)
     printf("Thread %d) Incrementing counter %d by %d = ", id, g_counter, increment);
     g_counter += increment;
     printf("%d\n", g_counter);
+}
+
+void MainRecursiveMutex(int id, int increment)
+{
+    // Recursive mutex allows the thread that owns the mutex to lock again.
+    std::lock_guard<std::recursive_mutex> lock(g_recursiveMutex);
+
+    if (increment == 0)
+    {
+        printf("Thread %d) Incremented counter: %d\n", id, g_counter);
+    }
+    else
+    {
+        // Increment counter one step at a time recursively
+        g_counter++;
+        MainRecursiveMutex(id, increment - 1);
+    }
 }
 
 void MainMutexUsingUniqueLock(int id, int increment)
@@ -139,6 +157,7 @@ void Mutex()
 
     runFunc(MainMutex);
     runFunc(MainMutexUsingLock);
+    runFunc(MainRecursiveMutex);
     runFunc(MainMutexUsingUniqueLock);
 }
 
