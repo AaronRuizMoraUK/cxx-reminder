@@ -6,6 +6,9 @@ void Stacks();
 void Queues();
 void Deques();
 void Sets();
+void Maps();
+void UnorderedSets();
+void UnorderedMaps();
 
 int main(int argc, char* argsv[])
 {
@@ -18,6 +21,9 @@ int main(int argc, char* argsv[])
     Queues();
     Deques();
     Sets();
+    Maps();
+    UnorderedSets();
+    UnorderedMaps();
 
     return 0;
 }

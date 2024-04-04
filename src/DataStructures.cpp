@@ -1,4 +1,5 @@
 #include <cstdio>
+#include <string>
 #include <array>
 #include <vector>
 #include <list>
@@ -7,6 +8,8 @@
 #include <deque>
 #include <set>
 #include <map>
+#include <unordered_set>
+#include <unordered_map>
 
 namespace
 {
@@ -16,15 +19,6 @@ namespace
         for (const auto& element : container)
         {
             std::printf("%d ", element);
-        }
-    }
-
-    template<class T>
-    void PrintContainerType(const T& container)
-    {
-        for (const auto& element : container)
-        {
-            std::printf("%d ", element.getValue());
         }
     }
 
@@ -52,6 +46,22 @@ namespace
         bool operator()(const Type& left, const Type& right) const
         {
             return left.getValue() < right.getValue();
+        }
+    };
+
+    struct TypeEqual
+    {
+        bool operator()(const Type& left, const Type& right) const
+        {
+            return left.getValue() == right.getValue();
+        }
+    };
+
+    struct TypeHash
+    {
+        std::size_t operator()(const Type& element) const
+        {
+            return std::hash<int>{}(element.getValue());
         }
     };
 }
@@ -183,7 +193,7 @@ void Arrays()
 // + Good for add/delete at the BEGINNING and END, because it has pointers to front and back elements.
 //      push_front, pop_front, push_back, pop_back
 // + Good for insertion and deletion of elements once having the iterator. Otherwise a search is needed, which is slow.
-//      insert, erase, remove, clear, assign
+//      insert, erase, splice, remove, clear, assign
 
 void LinkedLists()
 {
@@ -199,6 +209,9 @@ void LinkedLists()
 
     // Insert elements at specific position using iterator. Fast.
     std::list<int>::iterator firstInsertedElementIt = linkedList.insert(linkedList.begin()++, 2);
+
+    // Splice moves elements from one list to another into a specific location, same as insert but moving.
+    linkedList.splice(linkedList.begin()++, linkedList2);
 
     // Assign entire list
     linkedList.assign(5, 1); // {1, 1, 1, 1, 1}
@@ -310,7 +323,7 @@ void Queues()
 
 // Deques
 // 
-// A double queue is a queue that can add/delete at both beginning and end.
+// A double-ended queue is a queue that can add/delete at both beginning and end.
 // It also has iterators for access to any element.
 // 
 // https://stackoverflow.com/questions/6292332/what-really-is-a-deque-in-stl
@@ -371,14 +384,15 @@ void Deques()
 
 // Sets
 // 
-// Container where the elements themselves are the key to search for them (instead of an idex)
+// Container where the elements themselves are the key to search for them (instead of an index), and they store with a sorted order.
 // If the type used cannot be sorted (operator '<'), an structure with operator '()' can be provided returning less than operation.
 // It cannot have repeated elements.
+// It cannot modify elements (as that would modify its sorted order and corrupt the container).
 // 
 // Underneath it's implemented as a balanced binary search tree, such as red-back tree.
 // https://algorithmtutor.com/Data-Structures/Tree/Red-Black-Trees/
 // 
-// Bad for direct access and memory, good for searches and modifications.
+// Good for searches and modifications. Bad that accesses are searches.
 //
 // Access: N/A
 // Search: O(log n)
@@ -386,23 +400,29 @@ void Deques()
 // Delete: O(log n)
 //
 // + Element access needs to do a search in the tree, but O(log n) is not terrible.
-//      find
+//      find, equal_range, lower_bound, upper_bound
 // - Elements not continuos in memory, bad for cache when iterating through elements.
 //      begin, end (with ++/-- operators only)
 // + Good for insertion and deletion of elements
-//      insert, erase, extract, clear
+//      insert, erase, merge, extract, clear
 
 void Sets()
 {
     std::set<Type, TypeLess> set = {Type(4), Type(3), Type(2), Type(1)};
 
     // Insert elements. Fast.
-    std::pair<std::set<Type, TypeLess>::iterator, bool> insertedElementIt = set.insert(Type(6)); // pair.bool is false as it's new element.
-    insertedElementIt = set.insert(Type(6)); // pair.bool is true as it's already inserted.
-    insertedElementIt = set.emplace(9);
+    std::pair<std::set<Type, TypeLess>::iterator, bool> insertedElementPair = set.insert(Type(6)); // pair.bool is false as it's new element.
+    insertedElementPair = set.insert(Type(6)); // pair.bool is true as it's already inserted.
+    insertedElementPair = set.emplace(9);
+
+    // Search is O(log n), which is good.
+    std::set<Type, TypeLess>::iterator findIt = set.find(Type(3));
 
     std::printf("Set: ");
-    PrintContainerType(set);
+    for (const auto& element : set)
+    {
+        std::printf("%d ", element.getValue());
+    }
     std::printf("\n\n");
 
     // Erase elements at specific position using iterator. Fast.
@@ -413,7 +433,10 @@ void Sets()
     auto nodeExtracted = set.extract(set.begin());
     auto nodeExtracted2 = set.extract(Type(9));
 
-    std::set<Type, TypeLess>::iterator findIt = set.find(Type(3));
+    // Merge splices (moves elements) from another set.
+    // If element already exists it doesn't move it.
+    std::set<Type, TypeLess> set2 = { Type(3), Type(52), Type(105) };
+    set.merge(set2);
 
     set.clear(); // Removes all the elements.
 
@@ -424,11 +447,18 @@ void Sets()
     std::multiset<Type, TypeLess> multiset = { Type(4), Type(3), Type(3), Type(2), Type(1), Type(1) };
 
     // Insert elements. Fast.
-    std::multiset<Type, TypeLess>::iterator insertedElementIt2 = multiset.insert(Type(6));
-    insertedElementIt2 = multiset.emplace(9);
+    std::multiset<Type, TypeLess>::iterator insertedElementIt = multiset.insert(Type(6));
+    insertedElementIt = multiset.emplace(9);
+
+    // Search is O(log n), which is good.
+    // If there are several elements with the requested key in the container, any of them may be returned.
+    std::multiset<Type, TypeLess>::iterator findIt2 = multiset.find(Type(3));
 
     std::printf("Multiset: ");
-    PrintContainerType(multiset);
+    for (const auto& element : multiset)
+    {
+        std::printf("%d ", element.getValue());
+    }
     std::printf("\n\n");
 
     // Erase elements at specific position using iterator. Fast.
@@ -439,8 +469,376 @@ void Sets()
     auto nodeExtracted3 = multiset.extract(multiset.begin());
     auto nodeExtracted4 = multiset.extract(Type(9));
 
-    // If there are several elements with the requested key in the container, any of them may be returned.
-    std::multiset<Type, TypeLess>::iterator findIt2 = multiset.find(Type(3));
+    // Merge splices (moves elements) from another multiset, including repeated elements.
+    std::multiset<Type, TypeLess> multiset2 = { Type(3), Type(52), Type(105) };
+    multiset.merge(multiset2);
 
     multiset.clear(); // Removes all the elements.
+}
+
+// Maps
+// 
+// Container that stores key-value pairs, with each key being unique, and the keys are stored in a sorted order.
+// If the key type used cannot be sorted (operator '<'), an structure with operator '()' can be provided returning less than operation.
+// It cannot have repeated keys.
+// 
+// Underneath it's implemented as a balanced binary search tree, such as red-back tree.
+// https://algorithmtutor.com/Data-Structures/Tree/Red-Black-Trees/
+// 
+// Good for searches and modifications. Bad that accesses are searches.
+//
+// Access: N/A
+// Search: O(log n)
+// Insert: O(log n)
+// Delete: O(log n)
+//
+// + Element access needs to do a search in the tree, but O(log n) is not terrible.
+//      [], at, find, equal_range, lower_bound, upper_bound
+// - Elements not continuos in memory, bad for cache when iterating through elements.
+//      begin, end (with ++/-- operators only)
+// + Good for insertion and deletion of elements
+//      insert, erase, merge, extract, clear
+
+void Maps()
+{
+    using MyMap = std::map<Type, std::string, TypeLess>;
+    MyMap map = 
+    {
+        {Type(4), "four"}, 
+        {Type(3), "three"}, 
+        {Type(2), "two"},
+        {Type(1), "one"}
+    };
+
+    // Insert elements. Fast.
+    std::pair<MyMap::iterator, bool> insertedElementPair = map.insert({ Type(6), "six" }); // pair.bool is false as it's new element.
+    insertedElementPair = map.insert({ Type(6), "six_2" }); // pair.bool is true as Type(6) key is already inserted, it didn't assign "six_2" value.
+
+    insertedElementPair = map.emplace(Type(6), "six_3"); // Same as insert with in-place construction
+    insertedElementPair = map.try_emplace(Type(6), "six_4"); // Same as emplace, but it doesn't move from rvalue arguments if the insertion does not happen.
+
+    insertedElementPair = map.insert_or_assign(Type(6), "six_override"); // Same as insert, but it does assign the new value if key is found.
+
+    // Search is O(log n), which is good.
+    map[Type(9)] = "nine"; // [] operator does an insertion of defaul value (empty string) if key does not exist. Then it gets assigned "nine".
+    std::string value = map.at(Type(6)); // If key is not found, an exception of type std::out_of_range is thrown. Better use find instead.
+    MyMap::iterator findIt = map.find(Type(6));
+
+    std::printf("Map: ");
+    for (const auto& pair : map)
+    {
+        std::printf("{%d, \"%s\"} ", pair.first.getValue(), pair.second.c_str());
+    }
+    std::printf("\n\n");
+
+    // Erase elements at specific position using iterator. Fast.
+    MyMap::iterator afterErasedIt = map.erase(map.begin());
+    MyMap::iterator afterErasedRangeIt = map.erase(map.begin(), map.begin()++); // Removes elements in [first, last) range
+
+    // Remove element from the set and obtain it as node type.
+    auto nodeExtracted = map.extract(map.begin());
+    auto nodeExtracted2 = map.extract(Type(9));
+
+    // Merge splices (moves elements) from another map.
+    // If key already exists it doesn't move it.
+    MyMap map2 =
+    {
+        {Type(4), "four"},
+        {Type(33), "thirty three"},
+        {Type(22), "twenty two"}
+    };
+    map.merge(map2);
+
+    map.clear(); // Removes all the elements.
+
+    // ---------------------------
+    // Multimaps
+    // Same as maps but it allows to repeate keys.
+
+    using MyMultimap = std::multimap<Type, std::string, TypeLess>;
+    MyMultimap multimap =
+    {
+        {Type(4), "four"},
+        {Type(3), "three"},
+        {Type(3), "three_2"},
+        {Type(2), "two"},
+        {Type(2), "two_2"},
+        {Type(1), "one"}
+    };
+
+    // Insert elements. Fast.
+    MyMultimap::iterator insertedElemenIt = multimap.insert({ Type(6), "six" });
+    insertedElemenIt = multimap.insert({ Type(6), "six_2" });
+    insertedElemenIt = multimap.emplace(Type(6), "six_3");
+
+    // Search is O(log n), which is good.
+    // If there are several elements with the requested key in the container, any of them may be returned.
+    MyMultimap::iterator findIt2 = multimap.find(Type(6));
+
+    std::printf("Multimap: ");
+    for (const auto& pair : multimap)
+    {
+        std::printf("{%d, \"%s\"} ", pair.first.getValue(), pair.second.c_str());
+    }
+    std::printf("\n\n");
+
+    // Erase elements at specific position using iterator. Fast.
+    MyMultimap::iterator afterErasedIt2 = multimap.erase(multimap.begin());
+    MyMultimap::iterator afterErasedRangeIt2 = multimap.erase(multimap.begin(), multimap.begin()++); // Removes elements in [first, last) range
+
+    // Remove element from the set and obtain it as node type.
+    auto nodeExtracted3 = multimap.extract(multimap.begin());
+    auto nodeExtracted4 = multimap.extract(Type(9));
+
+    // Merge splices (moves elements) from another multimap, including repeated keys.
+    MyMultimap multimap2 =
+    {
+        {Type(4), "four"},
+        {Type(33), "thirty three"},
+        {Type(33), "thirty three 2"},
+        {Type(22), "twenty two"}
+    };
+    multimap.merge(multimap2);
+
+    multimap.clear(); // Removes all the elements.
+}
+
+// Unordered Sets
+// 
+// Same as std::set but using a hash table instead of a tree.
+// 
+// Container where the elements themselves are the key to search for them (instead of an index).
+// The elements are not sorted in any particular order, but organized into buckets.
+// Which bucket an element is placed into depends entirely on the hash of its value.
+// This allows fast access to individual elements, since once a hash is computed, it refers to the exact bucket the element is placed into.
+// If the type used cannot be hashed, an structure with operator '()' can be provided returning the hash calculation.
+// If the type used cannot be compared (operator '=='), an structure with operator '()' can be provided returning equal than operation.
+// It cannot have repeated elements.
+// It cannot modify elements (as that would modify its sorted order and corrupt the container).
+// 
+// The performance heavily depends on the quality of the hash function used. A good hash function distributes elements uniformly across buckets, 
+// minimizing collisions and maintaining average-case time complexity.
+// Hash tables have the concept of load factor "n / b", where n is the number of elements and b is the number of buckets.
+// If load factor is low: waste of space as there are too many buckets for the number of elements (they're not going to collide though)
+// If load factor is high: Risk of hash collisions and buckets may contain many different elements, making operations less efficient.
+// 
+// Good for searches and modifications. Bad that accesses are searches, buckets takes memory and hash calculation might be computationally expensive.
+//
+// Access: N/A
+// Search: O(1)
+// Insert: O(1)
+// Delete: O(1)
+//
+// + Element access is direct and fast (when using a good hash function).
+//      find, equal_range
+// - Elements not continuos in memory, bad for cache when iterating through elements.
+//      begin, end (with ++/-- operators only)
+// + Good for insertion and deletion of elements
+//      insert, erase, merge, extract, clear
+
+void UnorderedSets()
+{
+    using MyUnorderedSet = std::unordered_set<Type, TypeHash, TypeEqual>;
+    MyUnorderedSet set = { Type(4), Type(3), Type(2), Type(1) };
+
+    // Insert elements. Fast.
+    std::pair<MyUnorderedSet::iterator, bool> insertedElementPair = set.insert(Type(6)); // pair.bool is false as it's new element.
+    insertedElementPair = set.insert(Type(6)); // pair.bool is true as it's already inserted.
+    insertedElementPair = set.emplace(9);
+
+    // Search is O(log n), which is good.
+    MyUnorderedSet::iterator findIt = set.find(Type(3));
+
+    std::printf("Unordered Set: ");
+    for (const auto& element : set)
+    {
+        std::printf("%d ", element.getValue());
+    }
+    std::printf("\n\n");
+
+    // Erase elements at specific position using iterator. Fast.
+    MyUnorderedSet::iterator afterErasedIt = set.erase(set.begin());
+    MyUnorderedSet::iterator afterErasedRangeIt = set.erase(set.begin(), set.begin()++); // Removes elements in [first, last) range
+
+    // Remove element from the set and obtain it as node type.
+    auto nodeExtracted = set.extract(set.begin());
+    auto nodeExtracted2 = set.extract(Type(9));
+
+    // Merge splices (moves elements) from another set.
+    // If element already exists it doesn't move it.
+    MyUnorderedSet set2 = { Type(3), Type(52), Type(105) };
+    set.merge(set2);
+
+    set.clear(); // Removes all the elements.
+
+    // ---------------------------
+    // Unordered Multisets
+    // Same as unordered_set but it allows to repeate elements.
+    using MyUnorderedMultiset = std::unordered_multiset<Type, TypeHash, TypeEqual>;
+    MyUnorderedMultiset multiset = { Type(4), Type(3), Type(3), Type(2), Type(1), Type(1) };
+
+    // Insert elements. Fast.
+    MyUnorderedMultiset::iterator insertedElementIt = multiset.insert(Type(6));
+    insertedElementIt = multiset.emplace(9);
+
+    // Search is O(log n), which is good.
+    // If there are several elements with the requested key in the container, any of them may be returned.
+    MyUnorderedMultiset::iterator findIt2 = multiset.find(Type(3));
+
+    std::printf("Unordered Multiset: ");
+    for (const auto& element : multiset)
+    {
+        std::printf("%d ", element.getValue());
+    }
+    std::printf("\n\n");
+
+    // Erase elements at specific position using iterator. Fast.
+    MyUnorderedMultiset::iterator afterErasedIt2 = multiset.erase(multiset.begin());
+    MyUnorderedMultiset::iterator afterErasedRangeIt2 = multiset.erase(multiset.begin(), multiset.begin()++); // Removes elements in [first, last) range
+
+    // Remove element from the set and obtain it as node type
+    auto nodeExtracted3 = multiset.extract(multiset.begin());
+    auto nodeExtracted4 = multiset.extract(Type(9));
+
+    // Merge splices (moves elements) from another multiset, including repeated elements.
+    MyUnorderedMultiset multiset2 = { Type(3), Type(52), Type(105) };
+    multiset.merge(multiset2);
+
+    multiset.clear(); // Removes all the elements.
+}
+
+// Unordered Maps
+// 
+// Same as std::map but using a hash table instead of a tree.
+// 
+// Container that stores key-value pairs, with each key being unique.
+// The elements are not sorted in any particular order, but organized into buckets.
+// Which bucket an element is placed into depends entirely on the hash of its key.
+// This allows fast access to individual elements, since once a key hash is computed, it refers to the exact bucket the element is placed into.
+// If the key type used cannot be hashed, an structure with operator '()' can be provided returning the hash calculation.
+// If the key type used cannot be compared (operator '=='), an structure with operator '()' can be provided returning equal than operation.
+// It cannot have repeated keys.
+// 
+// The performance heavily depends on the quality of the hash function used. A good hash function distributes elements uniformly across buckets, 
+// minimizing collisions and maintaining average-case time complexity.
+// Hash tables have the concept of load factor "n / b", where n is the number of elements and b is the number of buckets.
+// If load factor is low: waste of space as there are too many buckets for the number of elements (they're not going to collide though)
+// If load factor is high: Risk of hash collisions and buckets may contain many different elements, making operations less efficient.
+// 
+// Good for searches and modifications. Bad that accesses are searches, buckets takes memory and hash calculation might be computationally expensive.
+//
+// Access: N/A
+// Search: O(1)
+// Insert: O(1)
+// Delete: O(1)
+//
+// + Element access is direct and fast (when using a good hash function).
+//      [], at, find, equal_range
+// - Elements not continuos in memory, bad for cache when iterating through elements.
+//      begin, end (with ++/-- operators only)
+// + Good for insertion and deletion of elements
+//      insert, erase, merge, extract, clear
+
+void UnorderedMaps()
+{
+    using MyUnordereMap = std::unordered_map<Type, std::string, TypeHash, TypeEqual>;
+    MyUnordereMap map =
+    {
+        {Type(4), "four"},
+        {Type(3), "three"},
+        {Type(2), "two"},
+        {Type(1), "one"}
+    };
+
+    // Insert elements. Fast.
+    std::pair<MyUnordereMap::iterator, bool> insertedElementPair = map.insert({ Type(6), "six" }); // pair.bool is false as it's new element.
+    insertedElementPair = map.insert({ Type(6), "six_2" }); // pair.bool is true as Type(6) key is already inserted, it didn't assign "six_2" value.
+
+    insertedElementPair = map.emplace(Type(6), "six_3"); // Same as insert with in-place construction
+    insertedElementPair = map.try_emplace(Type(6), "six_4"); // Same as emplace, but it doesn't move from rvalue arguments if the insertion does not happen.
+
+    insertedElementPair = map.insert_or_assign(Type(6), "six_override"); // Same as insert, but it does assign the new value if key is found.
+
+    // Search is O(log n), which is good.
+    map[Type(9)] = "nine"; // [] operator does an insertion of defaul value (empty string) if key does not exist. Then it gets assigned "nine".
+    std::string value = map.at(Type(6)); // If key is not found, an exception of type std::out_of_range is thrown. Better use find instead.
+    MyUnordereMap::iterator findIt = map.find(Type(6));
+
+    std::printf("Unordered Map: ");
+    for (const auto& pair : map)
+    {
+        std::printf("{%d, \"%s\"} ", pair.first.getValue(), pair.second.c_str());
+    }
+    std::printf("\n\n");
+
+    // Erase elements at specific position using iterator. Fast.
+    MyUnordereMap::iterator afterErasedIt = map.erase(map.begin());
+    MyUnordereMap::iterator afterErasedRangeIt = map.erase(map.begin(), map.begin()++); // Removes elements in [first, last) range
+
+    // Remove element from the set and obtain it as node type.
+    auto nodeExtracted = map.extract(map.begin());
+    auto nodeExtracted2 = map.extract(Type(9));
+
+    // Merge splices (moves elements) from another map.
+    // If key already exists it doesn't move it.
+    MyUnordereMap map2 =
+    {
+        {Type(4), "four"},
+        {Type(33), "thirty three"},
+        {Type(22), "twenty two"}
+    };
+    map.merge(map2);
+
+    map.clear(); // Removes all the elements.
+
+    // ---------------------------
+    // Unordered Multimaps
+    // Same as unordered_map but it allows to repeate keys.
+
+    using MyUnorderedMultimap = std::unordered_multimap<Type, std::string, TypeHash, TypeEqual>;
+    MyUnorderedMultimap multimap =
+    {
+        {Type(4), "four"},
+        {Type(3), "three"},
+        {Type(3), "three_2"},
+        {Type(2), "two"},
+        {Type(2), "two_2"},
+        {Type(1), "one"}
+    };
+
+    // Insert elements. Fast.
+    MyUnorderedMultimap::iterator insertedElemenIt = multimap.insert({ Type(6), "six" });
+    insertedElemenIt = multimap.insert({ Type(6), "six_2" });
+    insertedElemenIt = multimap.emplace(Type(6), "six_3");
+
+    // Search is O(log n), which is good.
+    // If there are several elements with the requested key in the container, any of them may be returned.
+    MyUnorderedMultimap::iterator findIt2 = multimap.find(Type(6));
+
+    std::printf("Unordered Multimap: ");
+    for (const auto& pair : multimap)
+    {
+        std::printf("{%d, \"%s\"} ", pair.first.getValue(), pair.second.c_str());
+    }
+    std::printf("\n\n");
+
+    // Erase elements at specific position using iterator. Fast.
+    MyUnorderedMultimap::iterator afterErasedIt2 = multimap.erase(multimap.begin());
+    MyUnorderedMultimap::iterator afterErasedRangeIt2 = multimap.erase(multimap.begin(), multimap.begin()++); // Removes elements in [first, last) range
+
+    // Remove element from the set and obtain it as node type.
+    auto nodeExtracted3 = multimap.extract(multimap.begin());
+    auto nodeExtracted4 = multimap.extract(Type(9));
+
+    // Merge splices (moves elements) from another multimap, including repeated keys.
+    MyUnorderedMultimap multimap2 =
+    {
+        {Type(4), "four"},
+        {Type(33), "thirty three"},
+        {Type(33), "thirty three 2"},
+        {Type(22), "twenty two"}
+    };
+    multimap.merge(multimap2);
+
+    multimap.clear(); // Removes all the elements.
 }
