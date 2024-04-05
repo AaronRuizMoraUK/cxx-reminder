@@ -571,8 +571,6 @@ void PromiseAndFuture()
     // (like a function, lambda expression, or a function object)
     // and allows its result to be retrieved asynchronously.
     // It can be looked as a promise, but it's a function instead of a value.
-    // Main advantage is that the already written functions don't need to
-    // be adapted to set the result in a std::promise to use it asynchronouly.
     std::packaged_task<int(const std::vector<int>&)> promiseTask(accumulateNumbers);
     std::future<int> futureResultFromTask = promiseTask.get_future();
 
