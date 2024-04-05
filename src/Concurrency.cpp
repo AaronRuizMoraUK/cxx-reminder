@@ -240,19 +240,18 @@ void LockMultipleMutex()
         CheckIsLocked(mutex2).m_locked ? "YES" : "NO",
         CheckIsLocked(mutex3).m_locked ? "YES" : "NO");
 
-#if 0
     // Method 3: Using std::unique_lock with std::adopt_lock and then std::lock.
     // 
     // Similar to method 2, but first using unique_lock with std::defer_lock to
-    // indicate "do not acquire ownership of the mutex", then call std::lock.
-    // But the unique_lock will unclock when it gets out of the scope.
-    //
-    // NOTE: This method is failing to unlock the mutex when unique_lock gets out of scope!
+    // indicate "do not acquire ownership of the mutex", then call std::lock to lock
+    // the unique_locks (not the mutex like in method 2).
+    // But the unique_lock will unclock the mutex when it gets out of the scope.
+    // Use this method if you'd like to use the features of unique_lock.
     {
         std::unique_lock<std::mutex> lock1(mutex1, std::defer_lock);
         std::unique_lock<std::mutex> lock2(mutex2, std::defer_lock);
         std::unique_lock<std::mutex> lock3(mutex3, std::defer_lock);
-        std::lock(mutex1, mutex2, mutex3);
+        std::lock(lock1, lock2, lock3);
         // When reaching code here all the mutex have been locked.
 
         printf("Mutex locked? 1: %s 2: %s 3: %s\n",
@@ -265,7 +264,6 @@ void LockMultipleMutex()
         CheckIsLocked(mutex1).m_locked ? "YES" : "NO",
         CheckIsLocked(mutex2).m_locked ? "YES" : "NO",
         CheckIsLocked(mutex3).m_locked ? "YES" : "NO");
-#endif
 }
 
 // Shared Mutex and Share/Unique Locks (C++ 17)
