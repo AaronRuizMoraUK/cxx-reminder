@@ -3,6 +3,8 @@
 #include <thread>
 #include <mutex>
 #include <shared_mutex>
+#include <future>
+#include <numeric>
 
 namespace
 {
@@ -484,4 +486,82 @@ void ConditionalVariables()
         t4.join();
         printf("\n");
     }
+}
+
+// Promise and Future
+//
+// They allow for a value to be communicated from one thread to another, enabling one thread
+// to wait for a value that is set by another thread.
+// 
+// A std:promise object is a writable single assignment container.
+// It is used to set a value (or an exception) that will be accessible in the future.
+// A std:promise object can have its value set exactly once, typically from a provider thread.
+//
+// A std::future object is a read-only container for a value that may not yet be available.
+// It's created from a std::promise and then when calling get(), typically from the consumer thread,
+// it'll wait there until the promise has set a value (from the provider thread) before returning it.
+// After calling get() the future object is invalid as the value has been moved out.
+// A std::future can be obtained from a std::promise, std::packaged_task, or std::async, which are
+// different ways to perform asynchronous operations.
+//
+// This mechanism decouples the thread that produces a value and the thread that consumes this value,
+// facilitating asynchronous and concurrent programming. The promise-future mechanism simplifies the
+// synchronization of data between threads and the management of asynchronous operations, making it
+// easier to write concurrent C++ applications.
+
+void MainPromiseProviderAccumulate(
+    const std::vector<int>& numbers,
+    std::promise<int> promiseAccumulate)
+{
+    int sum = std::accumulate(numbers.begin(), numbers.end(), 0);
+    promiseAccumulate.set_value(sum); // Notify future
+}
+
+void MainDoWork(std::promise<void> barrier)
+{
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    barrier.set_value(); // Notify future, no need to set an actual value, useful to mimic barriers.
+}
+
+void PromiseAndFuture()
+{
+    const std::vector<int> numbers = { 1, 2, 3, 4, 5, 6 };
+
+    // Demonstrate using promise<int> to transmit a result between threads.
+    std::promise<int> promiseAccumulate;
+    std::future<int> futureAccumulate = promiseAccumulate.get_future();
+
+    std::thread thread(
+        MainPromiseProviderAccumulate, 
+        numbers,
+        std::move(promiseAccumulate));
+
+    // future::get() will wait until the future has a valid result and retrieves it.
+    // Calling wait() before get() is not needed
+    int accumulate = futureAccumulate.get();
+    std::printf("result = %d\n", accumulate);
+
+    thread.join(); // wait for thread completion
+
+    // -------------------------------
+    // Demonstrate using promise<void> to signal state between threads.
+    std::promise<void> barrier;
+    std::future<void> futureBarrier = barrier.get_future();
+
+    std::thread newWorkThread(MainDoWork, std::move(barrier));
+
+    futureBarrier.wait();  // wait here until other thread triggers the barrier
+
+    newWorkThread.join();  // wait for thread completion
+
+    // -------------------------------
+    // Basic Usage of std::future with std::async
+    auto futureResult = std::async(std::launch::async,
+        [&numbers]()
+        {
+            return std::accumulate(numbers.begin(), numbers.end(), 0);
+        }); // Start an asynchronous task
+
+    int accumulate2 = futureResult.get(); // Wait and get the result
+    std::printf("result = %d\n", accumulate2);
 }

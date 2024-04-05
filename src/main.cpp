@@ -17,6 +17,7 @@ void LockMultipleMutex();
 void SharedMutex();
 void Atomics();
 void ConditionalVariables();
+void PromiseAndFuture();
 
 int main(int argc, char* argsv[])
 {
@@ -41,6 +42,7 @@ int main(int argc, char* argsv[])
     SharedMutex();
     Atomics();
     ConditionalVariables();
+    PromiseAndFuture();
 
     return 0;
 }
