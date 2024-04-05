@@ -398,3 +398,90 @@ void Atomics()
 
     printf("Main Thread) Threads finished. Counter: %d\n\n", atomicCounter.load());
 }
+
+// Condition Variables
+//
+// Used for synchronization between threads. Allows one or more threads to wait for
+// notifications sent by other threads.
+// It's used with a std::mutex to block one or more threads until another thread
+// modifies a shared variable (the condition) and notifies the std::condition_variable.
+// std::condition_variable only works with std::unique_lock.
+
+int g_sharedValueForCondition = 0;
+std::condition_variable g_conditionVar;
+std::mutex g_conditionVarMutex; // This mutex is used for three purposes:
+                                // 1) to synchronize accesses g_sharedValueForCondition
+                                // 2) to synchronize accesses to printf
+                                // 3) for the condition variable g_conditionVar
+
+void MainCVWaits(int id)
+{
+    // Method 1 using condition variable
+    // 1. Acquire a std::unique_lock on the mutex used to protect the shared variable used for the condition.
+    // 2. Check the condition
+    // 3. Call wait if it the condition is not met yet
+    //    NOTE: The wait call migh spuriously wake to check the condition without a notifiation.
+
+    std::unique_lock<std::mutex> lock(g_conditionVarMutex);
+    while (g_sharedValueForCondition != 1)
+    {
+        printf("Wait Thread %d) Waiting...\n", id);
+        g_conditionVar.wait(lock);
+    }
+    printf("Wait Thread %d) Finished waiting. g_sharedValueForCondition == 1\n", id);
+}
+
+void MainCVWaitsCompact(int id)
+{
+    // Method 2 using condition variable
+    // 1. Acquire a std::unique_lock on the mutex used to protect the shared variable used for the condition.
+    // 2. Call wait passing the function that returns true when the condition is met.
+    //    This overload wait encapsulates the check and wait from Method 1.
+    //    This overload may be used to ignore spurious awakenings while waiting for a specific condition to become true.
+
+    std::unique_lock<std::mutex> lock(g_conditionVarMutex);
+    printf("Wait Thread %d) Waiting...\n", id);
+    g_conditionVar.wait(lock, [] { return g_sharedValueForCondition == 1; });
+    printf("Wait Thread %d) Finished waiting. g_sharedValueForCondition == 1\n", id);
+}
+
+void MainCVSignals()
+{
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    {
+        std::lock_guard<std::mutex> lock(g_conditionVarMutex);
+        printf("Signal Thread) Notifying without changing g_sharedValueForCondition value...\n");
+    }
+    g_conditionVar.notify_all();
+
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    {
+        std::lock_guard<std::mutex> lock(g_conditionVarMutex);
+        g_sharedValueForCondition = 1;
+        printf("Signal Thread) Notifying again after changing g_sharedValueForCondition value to 1...\n");
+    }
+    g_conditionVar.notify_all();
+}
+
+void ConditionalVariables()
+{
+    {
+        g_sharedValueForCondition = 0;
+        std::thread t1(MainCVWaits, 0), t2(MainCVWaits, 1), t3(MainCVWaits, 2), t4(MainCVSignals);
+        t1.join();
+        t2.join();
+        t3.join();
+        t4.join();
+        printf("\n");
+    }
+
+    {
+        g_sharedValueForCondition = 0;
+        std::thread t1(MainCVWaitsCompact, 0), t2(MainCVWaitsCompact, 1), t3(MainCVWaitsCompact, 2), t4(MainCVSignals);
+        t1.join();
+        t2.join();
+        t3.join();
+        t4.join();
+        printf("\n");
+    }
+}
