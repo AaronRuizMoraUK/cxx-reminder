@@ -520,7 +520,7 @@ void MainPromiseProviderAccumulate(
 void MainDoWork(std::promise<void> barrier)
 {
     std::this_thread::sleep_for(std::chrono::seconds(1));
-    barrier.set_value(); // Notify future, no need to set an actual value, useful to mimic barriers.
+    barrier.set_value(); // Notify future, no need to set an actual value.
 }
 
 void PromiseAndFuture()
@@ -556,12 +556,31 @@ void PromiseAndFuture()
 
     // -------------------------------
     // Basic Usage of std::future with std::async
-    auto futureResult = std::async(std::launch::async,
-        [&numbers]()
+    auto accumulateNumbers = [](const std::vector<int>& numbers)
         {
             return std::accumulate(numbers.begin(), numbers.end(), 0);
-        }); // Start an asynchronous task
+        };
+
+    std::future<int> futureResult = std::async(std::launch::async, accumulateNumbers, numbers); // Start an asynchronous task
 
     int accumulate2 = futureResult.get(); // Wait and get the result
     std::printf("result = %d\n", accumulate2);
+
+    // -------------------------------
+    // std::package_task allows to wrap a callable entity
+    // (like a function, lambda expression, or a function object)
+    // and allows its result to be retrieved asynchronously.
+    // It can be looked as a promise, but it's a function instead of a value.
+    // Main advantage is that the already written functions don't need to
+    // be adapted to set the result in a std::promise to use it asynchronouly.
+    std::packaged_task<int(const std::vector<int>&)> promiseTask(accumulateNumbers);
+    std::future<int> futureResultFromTask = promiseTask.get_future();
+
+    std::thread thread2(
+        std::move(promiseTask),
+        numbers);
+    thread2.join(); // wait for thread completion
+
+    int accumulate3 = futureResultFromTask.get();
+    std::printf("result = %d\n", accumulate3);
 }
