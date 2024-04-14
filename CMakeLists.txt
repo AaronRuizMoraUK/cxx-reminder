@@ -8,6 +8,7 @@ set(SOURCE_FILE_LIST
     src/Algorithms.cpp
     src/Concurrency.cpp
     src/Streams.cpp
+    src/Views.cpp
     src/Cxx11.cpp
     src/Cxx14.cpp
     src/Cxx17.cpp
