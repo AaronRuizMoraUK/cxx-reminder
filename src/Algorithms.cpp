@@ -419,3 +419,41 @@ void AdjacentTransform() // A better for the actual operation that is std::adjac
     // --------------------------------------------------------
     // There are also the parallel execution versions.
 }
+
+// ----------------------------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------------------------
+
+void OtherAlgorithms()
+{
+    const std::vector<int> numbers = { 2, 6, 1, 5, 34, 12, 65, 21 };
+    std::printf("Input: ");
+    PrintContainer(numbers);
+    std::printf("\n");
+
+    bool result = std::any_of(numbers.cbegin(), numbers.cend(),
+        [](int element)
+        {
+            return element > 25;
+        });
+    std::printf("std::any_of elements greater than 25: %s\n", result ? "YES" : "NO");
+
+    result = std::all_of(numbers.cbegin(), numbers.cend(),
+        [](int element)
+        {
+            return element > 25;
+        });
+    std::printf("std::all_of elements greater than 25: %s\n", result ? "YES" : "NO");
+
+    result = std::none_of(numbers.cbegin(), numbers.cend(),
+        [](int element)
+        {
+            return element < 0;
+        });
+    std::printf("std::none_of elements are negative: %s\n", result ? "YES" : "NO");
+
+    std::vector<int> iotaOutput(10);
+    std::iota(iotaOutput.begin(), iotaOutput.end(), -3); // -3 is first element, then subsequent elements are +1 until the end of the range: -3, -2, -1, etc.
+    std::printf("std::iota: ");
+    PrintContainer(iotaOutput);
+    std::printf("\n");
+}

@@ -28,6 +28,7 @@ void AdjacentReduce();
 void TransformInclusiveScan_TransformExclusiveScan();
 void AdjacentFind();
 void AdjacentTransform();
+void OtherAlgorithms();
 
 int main(int argc, char* argsv[])
 {
@@ -63,6 +64,7 @@ int main(int argc, char* argsv[])
     TransformInclusiveScan_TransformExclusiveScan(); // Index 2 / Accumulator YES / Operation Transform
     AdjacentFind();                                  // Index 2 / Accumulator NO  / Operation Reduce
     AdjacentTransform();                             // Index 2 / Accumulator NO  / Operation Transform
+    OtherAlgorithms();
 
     return 0;
 }
