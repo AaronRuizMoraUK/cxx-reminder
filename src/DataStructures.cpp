@@ -606,7 +606,7 @@ void Sets()
 // - Elements not continuos in memory, bad for cache when iterating through elements.
 //      begin, end (with ++/-- operators only)
 // + Good for insertion and deletion of elements
-//      insert, erase, merge, extract, clear
+//      insert, insert_or_assign, erase, merge, extract, clear
 
 void Maps()
 {
@@ -723,7 +723,7 @@ void Maps()
 // If the type used cannot be hashed, an structure with operator '()' can be provided returning the hash calculation.
 // If the type used cannot be compared (operator '=='), an structure with operator '()' can be provided returning equal than operation.
 // It cannot have repeated elements.
-// It cannot modify elements (as that would modify its sorted order and corrupt the container).
+// It cannot modify elements' values involved in the hashing (as that would modify its sorted order and corrupt the container).
 // 
 // The performance heavily depends on the quality of the hash function used. A good hash function distributes elements uniformly across buckets, 
 // minimizing collisions and maintaining average-case time complexity.
@@ -846,7 +846,7 @@ void UnorderedSets()
 // - Elements not continuos in memory, bad for cache when iterating through elements.
 //      begin, end (with ++/-- operators only)
 // + Good for insertion and deletion of elements
-//      insert, erase, merge, extract, clear
+//      insert, insert_or_assign, erase, merge, extract, clear
 
 void UnorderedMaps()
 {

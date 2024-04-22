@@ -19,6 +19,16 @@ void Atomics();
 void ConditionalVariables();
 void PromiseAndFuture();
 
+void Reduce();
+void TransformReduce();
+void InclusiveScan_ExclusiveScan();
+void Find();
+void Transform();
+void AdjacentReduce();
+void TransformInclusiveScan_TransformExclusiveScan();
+void AdjacentFind();
+void AdjacentTransform();
+
 int main(int argc, char* argsv[])
 {
     std::printf("C++ Reminder\n\n");
@@ -43,6 +53,16 @@ int main(int argc, char* argsv[])
     Atomics();
     ConditionalVariables();
     PromiseAndFuture();
+
+    // Algorithms
+    Reduce(); TransformReduce();                     // Index 1 / Accumulator YES / Operation Reduce
+    InclusiveScan_ExclusiveScan();                   // Index 1 / Accumulator YES / Operation Transform
+    Find();                                          // Index 1 / Accumulator NO  / Operation Reduce
+    Transform();                                     // Index 1 / Accumulator NO  / Operation Transform
+    AdjacentReduce();                                // Index 2 / Accumulator YES / Operation Reduce
+    TransformInclusiveScan_TransformExclusiveScan(); // Index 2 / Accumulator YES / Operation Transform
+    AdjacentFind();                                  // Index 2 / Accumulator NO  / Operation Reduce
+    AdjacentTransform();                             // Index 2 / Accumulator NO  / Operation Transform
 
     return 0;
 }
