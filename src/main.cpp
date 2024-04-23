@@ -30,6 +30,10 @@ void AdjacentFind();
 void AdjacentTransform();
 void OtherAlgorithms();
 
+void File();
+void FileStream();
+void FileSystem();
+
 int main(int argc, char* argsv[])
 {
     std::printf("C++ Reminder\n\n");
@@ -65,6 +69,11 @@ int main(int argc, char* argsv[])
     AdjacentFind();                                  // Index 2 / Accumulator NO  / Operation Reduce
     AdjacentTransform();                             // Index 2 / Accumulator NO  / Operation Transform
     OtherAlgorithms();
+
+    // Files
+    File();
+    FileStream();
+    FileSystem();
 
     return 0;
 }
