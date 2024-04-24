@@ -79,7 +79,7 @@ namespace
 // Insert: O(n) (end : O(1) if ignoring the time taken to resize a dynamic array)
 // Delete: O(n)
 //
-// + Elements continuos in memory, element access is fast
+// + Elements continuous in memory, element access is fast
 //      [], at, front, back
 // + Good for cache when iterating through elements.
 //      begin, end
@@ -129,7 +129,7 @@ void Arrays()
     // emplace_back provides a more efficient way to construct and insert
     // elements directly into the vector, which can lead to performance
     // improvements in certain scenarios. With emplace_back you pass the constructor
-    // argumets of the type, not the type itself.
+    // arguments of the type, not the type itself.
     dynamicArray.push_back(1);
 
     // Access is fast
@@ -138,9 +138,9 @@ void Arrays()
     int back2 = staticArrayStd.back();
     int at2 = staticArrayStd.at(2);
 
-    // Insert elements at specific position using iterator. Slown.
+    // Insert elements at specific position using iterator. Slow.
     // Use emplace to construct and insert.With emplace you pass the constructor
-    // argumets of the type, not the type itself.
+    // arguments of the type, not the type itself.
     std::vector<int>::iterator firstInsertedElementIt = dynamicArray.insert(dynamicArray.begin(), 3);
 
     // Assign entire vector
@@ -154,7 +154,7 @@ void Arrays()
     // Remove elements at the end. Fast.
     dynamicArray.pop_back();
 
-    // Erase elements at specific position using iterator. Slown.
+    // Erase elements at specific position using iterator. Slow.
     std::vector<int>::iterator afterErasedIt = dynamicArray.erase(dynamicArray.begin());
     std::vector<int>::iterator afterErasedRangeIt = dynamicArray.erase(dynamicArray.begin(), dynamicArray.begin() + 2); // Removes elements in [first, last) range
 
@@ -188,9 +188,9 @@ void Arrays()
 // Insert: O(1) at the beginning/end, O(n) in the middle
 // Delete: O(1) at the beginning/end, O(n) in the middle
 //
-// - Element access is slow (except front and back), as it has to start from the begining of the list.
+// - Element access is slow (except front and back), as it has to start from the beginning of the list.
 //      front, back
-// - Elements not continuos in memory, bad for cache when iterating through elements.
+// - Elements not continuous in memory, bad for cache when iterating through elements.
 //      begin, end (with ++/-- operators only)
 // + Good for add/delete at the BEGINNING and END, because it has pointers to front and back elements.
 //      push_front, pop_front, push_back, pop_back
@@ -203,7 +203,7 @@ void LinkedLists()
     std::list<int> linkedList = {1, 2, 3, 4, 5};
     std::list<int> linkedList2(5, 1); ; // {1, 1, 1, 1, 1}
 
-    // Add elements at the beginnig and end. Fast.
+    // Add elements at the beginning and end. Fast.
     linkedList.push_back(5);
     linkedList.push_front(3);
 
@@ -242,7 +242,7 @@ void LinkedLists()
 
     // ---------------------------
     // Singly Linked List (std::forward_list)
-    // Same as std::list but it can only traver forward and add/delete at front (not back) of the list.
+    // Same as std::list but it can only travel forward and add/delete at front (not back) of the list.
     // It uses less memory per element as it only has 1 pointer to the next element.
     //
     // Access: O(1) at the beginning, O(n) in the middle/end
@@ -272,7 +272,7 @@ void LinkedLists()
     PrintContainer(forwardLinkedList);
     std::printf("\n\n");
 
-    // Remove elements at the begnning. Fast.
+    // Remove elements at the beginning. Fast.
     forwardLinkedList.pop_front();
 
     // Erase elements at specific position using iterator. Fast.
@@ -306,7 +306,7 @@ void LinkedLists()
 //
 // + Access to top element is fast
 //      top
-// - Not possbile to access to any other element, as there are no iterators.
+// - Not possible to access to any other element, as there are no iterators.
 // + Good for add/delete at the top.
 //      push, pop
 // - Not possible for insertion and deletion other than the top.
@@ -374,7 +374,7 @@ void Queues()
 
 // Priority Queues
 // 
-// A linear data structure that that provides constant time lookup of the largest (or smallest, 
+// A linear data structure that provides constant time lookup of the largest (or smallest, 
 // depending on the comparator) element, at the expense of logarithmic insertion and extraction. 
 // It is typically implemented using a heap data structure, such as a binary heap.
 // 
@@ -446,7 +446,7 @@ void PriorityQueues()
 //
 // + Element access is fast
 //      [], at, front, back
-// ~ Elements are stored in multiple chunks of memory, so it's ok to iterate through elements.
+// ~ Elements are stored in multiple chunks of memory, so it's OK to iterate through elements.
 //      begin, end
 // + Good for add/delete at the BEGINNING and END.
 //      push_front, pop_front, push_back, pop_back
@@ -457,7 +457,7 @@ void Deques()
 {
     std::deque<int> deque = {1, 2, 3, 4};
 
-    // Add elements at the beginnig and end. Fast.
+    // Add elements at the beginning and end. Fast.
     deque.push_back(5);
     deque.push_front(2);
 
@@ -510,7 +510,7 @@ void Deques()
 //
 // + Element access needs to do a search in the tree, but O(log n) is not terrible.
 //      find, equal_range, lower_bound, upper_bound
-// - Elements not continuos in memory, bad for cache when iterating through elements.
+// - Elements not continuous in memory, bad for cache when iterating through elements.
 //      begin, end (with ++/-- operators only)
 // + Good for insertion and deletion of elements
 //      insert, erase, merge, extract, clear
@@ -551,7 +551,7 @@ void Sets()
 
     // ---------------------------
     // Multisets
-    // Same as set but it allows to repeate elements.
+    // Same as set but it allows to repeat elements.
 
     std::multiset<Type, TypeLess> multiset = { Type(4), Type(3), Type(3), Type(2), Type(1), Type(1) };
 
@@ -603,7 +603,7 @@ void Sets()
 //
 // + Element access needs to do a search in the tree, but O(log n) is not terrible.
 //      [], at, find, equal_range, lower_bound, upper_bound
-// - Elements not continuos in memory, bad for cache when iterating through elements.
+// - Elements not continuous in memory, bad for cache when iterating through elements.
 //      begin, end (with ++/-- operators only)
 // + Good for insertion and deletion of elements
 //      insert, insert_or_assign, erase, merge, extract, clear
@@ -629,7 +629,7 @@ void Maps()
     insertedElementPair = map.insert_or_assign(Type(6), "six_override"); // Same as insert, but it does assign the new value if key is found.
 
     // Search is O(log n), which is good.
-    map[Type(9)] = "nine"; // [] operator does an insertion of defaul value (empty string) if key does not exist. Then it gets assigned "nine".
+    map[Type(9)] = "nine"; // [] operator does an insertion of default value (empty string) if key does not exist. Then it gets assigned "nine".
     std::string value = map.at(Type(6)); // If key is not found, an exception of type std::out_of_range is thrown. Better use find instead.
     MyMap::iterator findIt = map.find(Type(6));
 
@@ -662,7 +662,7 @@ void Maps()
 
     // ---------------------------
     // Multimaps
-    // Same as maps but it allows to repeate keys.
+    // Same as maps but it allows to repeat keys.
 
     using MyMultimap = std::multimap<Type, std::string, TypeLess>;
     MyMultimap multimap =
@@ -740,7 +740,7 @@ void Maps()
 //
 // + Element access is direct and fast (when using a good hash function).
 //      find, equal_range
-// - Elements not continuos in memory, bad for cache when iterating through elements.
+// - Elements not continuous in memory, bad for cache when iterating through elements.
 //      begin, end (with ++/-- operators only)
 // + Good for insertion and deletion of elements
 //      insert, erase, merge, extract, clear
@@ -782,7 +782,7 @@ void UnorderedSets()
 
     // ---------------------------
     // Unordered Multisets
-    // Same as unordered_set but it allows to repeate elements.
+    // Same as unordered_set but it allows to repeat elements.
     using MyUnorderedMultiset = std::unordered_multiset<Type, TypeHash, TypeEqual>;
     MyUnorderedMultiset multiset = { Type(4), Type(3), Type(3), Type(2), Type(1), Type(1) };
 
@@ -843,7 +843,7 @@ void UnorderedSets()
 //
 // + Element access is direct and fast (when using a good hash function).
 //      [], at, find, equal_range
-// - Elements not continuos in memory, bad for cache when iterating through elements.
+// - Elements not continuous in memory, bad for cache when iterating through elements.
 //      begin, end (with ++/-- operators only)
 // + Good for insertion and deletion of elements
 //      insert, insert_or_assign, erase, merge, extract, clear
@@ -869,7 +869,7 @@ void UnorderedMaps()
     insertedElementPair = map.insert_or_assign(Type(6), "six_override"); // Same as insert, but it does assign the new value if key is found.
 
     // Search is O(log n), which is good.
-    map[Type(9)] = "nine"; // [] operator does an insertion of defaul value (empty string) if key does not exist. Then it gets assigned "nine".
+    map[Type(9)] = "nine"; // [] operator does an insertion of default value (empty string) if key does not exist. Then it gets assigned "nine".
     std::string value = map.at(Type(6)); // If key is not found, an exception of type std::out_of_range is thrown. Better use find instead.
     MyUnordereMap::iterator findIt = map.find(Type(6));
 
@@ -902,7 +902,7 @@ void UnorderedMaps()
 
     // ---------------------------
     // Unordered Multimaps
-    // Same as unordered_map but it allows to repeate keys.
+    // Same as unordered_map but it allows to repeat keys.
 
     using MyUnorderedMultimap = std::unordered_multimap<Type, std::string, TypeHash, TypeEqual>;
     MyUnorderedMultimap multimap =

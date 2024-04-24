@@ -17,9 +17,9 @@ namespace
     }
 }
 
-// Characteristic to clasify the algorithms:
+// Characteristic to classify the algorithms:
 // - Index Viewed: 1 Index means 1 lookup in the range. 2 Index means 2 lookups in the range (current and next).
-// - Acumulator: whether the algorithm uses an accumulator variable or not.
+// - Accumulator: whether the algorithm uses an accumulator variable or not.
 // - Reduce/Transform: Refers to kind of outcome expected, another range of same size (Transform) or final structure/value from iterating the range (reduce).
 
 // --------------------
@@ -50,7 +50,7 @@ void Reduce()
     std::string result = std::accumulate(numbers.cbegin(), numbers.cend(),
         // Accumulator is a string
         std::string("All numbers: "),
-        // Reduce operator takes (accumulator, element) as input paramters
+        // Reduce operator takes (accumulator, element) as input parameters
         [](std::string accumulator, int element)
         {
             return std::move(accumulator) + std::to_string(element) + " ,";
@@ -94,7 +94,7 @@ void TransformReduce()
     std::string result = std::inner_product(numbers1.cbegin(), numbers1.cend(), numbers2.cbegin(),
         // Accumulator is a string
         std::string("All numbers: "),
-        // Reduce operator takes (accumulator, transformedElement) as input paramters
+        // Reduce operator takes (accumulator, transformedElement) as input parameters
         // Note: transformedElement is the returned value from the transform operator (next parameter)
         [](std::string accumulator, int transformedElement)
         {
@@ -146,7 +146,7 @@ void InclusiveScan_ExclusiveScan()
     // add the elements.
 
     std::partial_sum(numbers.cbegin(), numbers.cend(), transformedNumbers.begin(),
-        // Transform operator takes (accumulator, element) as input paramters
+        // Transform operator takes (accumulator, element) as input parameters
         [](int accumulator, int element)
         {
             return accumulator * element;
@@ -168,7 +168,7 @@ void InclusiveScan_ExclusiveScan()
     // element of the output, then it does the same as std::inclusive_scan.
     // Accumulator must be the same element as the range.
     // It also supports parallel execution.
-    std::exclusive_scan(numbers.cbegin(), numbers.cend(), transformedNumbers.begin(), 0 /*intial value of accumulator*/);
+    std::exclusive_scan(numbers.cbegin(), numbers.cend(), transformedNumbers.begin(), 0 /*initial value of accumulator*/);
     std::printf("std::exclusive_scan: ");
     PrintContainer(transformedNumbers);
     std::printf("\n");
@@ -279,7 +279,7 @@ void AdjacentReduce()
     std::string result = adjacent_reduce(numbers.cbegin(), numbers.cend(),
         // Accumulator is a string
         std::string("All numbers: "),
-        // Reduce operator takes (accumulator, element) as input paramters
+        // Reduce operator takes (accumulator, element) as input parameters
         [](std::string accumulator, int transformedElement)
         {
             return std::move(accumulator) + std::to_string(transformedElement) + " ,";
@@ -364,11 +364,11 @@ void AdjacentFind()
     PrintContainer(numbers);
     std::printf("\n");
 
-    // Searches for 2 consecutives elements that satisfy the comparison operator.
+    // Searches for 2 consecutive elements that satisfy the comparison operator.
     // Default comparison operator: std::equal_to()
 
     auto it = std::adjacent_find(numbers.begin(), numbers.end());
-    std::printf("Did it find 2 consecutives elements that are equal? %s\n", it != numbers.end() ? "YES" : "NO");
+    std::printf("Did it find 2 consecutive elements that are equal? %s\n", it != numbers.end() ? "YES" : "NO");
 
     it = std::adjacent_find(numbers.begin(), numbers.end(),
         // Binary operator to compare 2 consecutive elements
@@ -376,7 +376,7 @@ void AdjacentFind()
         {
             return element1 == element2 / 5; // Stops when finds one element that is 5 times smaller than its consecutive.
         });
-    std::printf("Did it find 2 consecutives elements where first is 5 times smaller than the second? %s\n", it != numbers.end() ? "YES" : "NO");
+    std::printf("Did it find 2 consecutive elements where first is 5 times smaller than the second? %s\n", it != numbers.end() ? "YES" : "NO");
 
     // --------------------------------------------------------
     // There are also the parallel execution versions.

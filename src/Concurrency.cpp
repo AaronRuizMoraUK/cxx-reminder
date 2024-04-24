@@ -247,7 +247,7 @@ void LockMultipleMutex()
     // Similar to method 2, but first using unique_lock with std::defer_lock to
     // indicate "do not acquire ownership of the mutex", then call std::lock to lock
     // the unique_locks (not the mutex like in method 2).
-    // But the unique_lock will unclock the mutex when it gets out of the scope.
+    // But the unique_lock will unlock the mutex when it gets out of the scope.
     // Use this method if you'd like to use the features of unique_lock.
     {
         std::unique_lock<std::mutex> lock1(mutex1, std::defer_lock);
@@ -362,7 +362,7 @@ void SharedMutex()
 //
 // Types that encapsulate values and guarantee atomic operations to prevent data races.
 // Useful for lock-free concurrent programming.
-// Usual operations are load, store, increment, decrement, add, substract.
+// Usual operations are load, store, increment, decrement, add, subtract.
 // It supports many basic types: https://en.cppreference.com/w/cpp/atomic/atomic
 
 void Atomics()
@@ -422,7 +422,7 @@ void MainCVWaits(int id)
     // 1. Acquire a std::unique_lock on the mutex used to protect the shared variable used for the condition.
     // 2. Check the condition
     // 3. Call wait if it the condition is not met yet
-    //    NOTE: The wait call migh spuriously wake to check the condition without a notifiation.
+    //    NOTE: The wait call might spuriously wake to check the condition without a notification.
 
     std::unique_lock<std::mutex> lock(g_conditionVarMutex);
     while (g_sharedValueForCondition != 1)

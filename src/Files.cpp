@@ -23,14 +23,14 @@ void File()
         const char data[] = "Another world!\n";
         fwrite(data, sizeof(char), sizeof(data) - 1, outFile); // Write "sizeof(data) - 1" number of chars ("sizeof(char)") into the file.
 
-        fflush(outFile); // Perform any operations that migh be remaining
+        fflush(outFile); // Perform any operations that might be remaining
 
         long filePosition = ftell(outFile);
         fseek(outFile, filePosition - 3, SEEK_SET);
 
         fprintf(outFile, ", this is C!\n");
 
-        fseek(outFile, 0, SEEK_SET);  // Go to begining of file. rewind(outFile) would be the same
+        fseek(outFile, 0, SEEK_SET);  // Go to beginning of file. rewind(outFile) would be the same
         fseek(outFile, 0, SEEK_END);  // Go to end of file
 
         fprintf(outFile, "Bye\n");
@@ -100,7 +100,7 @@ void FileStreams()
         const char data2[] = ", this is C++!\n";
         outFile.write(data2, sizeof(data2)-1);
 
-        outFile.seekp(std::streamoff(0), std::ios_base::beg); // Go to begining of file
+        outFile.seekp(std::streamoff(0), std::ios_base::beg); // Go to beginning of file
         outFile.seekp(std::streamoff(0), std::ios_base::end); // Go to end of file
 
         outFile.write("Bye\n", 4);

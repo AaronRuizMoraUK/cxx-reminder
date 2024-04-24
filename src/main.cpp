@@ -37,6 +37,10 @@ void FileSystem();
 void StandardStreamObjects();
 void StringStreams();
 
+void Traits();
+
+void Concepts();
+
 int main(int argc, char* argsv[])
 {
     std::printf("C++ Reminder\n\n");
@@ -81,6 +85,12 @@ int main(int argc, char* argsv[])
     // Streams
     StandardStreamObjects();
     StringStreams();
+
+    // Traits
+    Traits();
+
+    // C++20
+    Concepts();
 
     return 0;
 }
