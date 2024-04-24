@@ -60,7 +60,7 @@ T Add5(T a, T b)
 template<typename T>
 concept MyIntegral = std::integral<T>; // <-- Boolean expression evaluated in compilation time. Traits also work here.
 
-// Define a concept to check the arguments passed support operators
+// Define a concept to check the type passed support operators
 template <typename T>
 concept Multipliable = requires(T a, T b)
 {
