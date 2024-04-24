@@ -10,11 +10,11 @@
 // Concepts
 // 
 // Mechanism to place constraints on your template type parameters
-// For example, constraint that only integers can use our templated function.
+// For example, constrain that only integers can use our templated function.
 // If the constraint is not satisfied, it will produce a compiler error.
 // There are standard built in concepts, but you can build your own concepts.
 // 
-// Concepts is a much cleaner way than using template traits and static_asserts.
+// Concepts are a much cleaner way than using template traits and static_asserts.
 // 
 // https://en.cppreference.com/w/cpp/concepts
 // --------------------------------------------------------------------------------
