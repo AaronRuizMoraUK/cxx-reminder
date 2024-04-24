@@ -21,6 +21,8 @@ namespace
 // - Index Viewed: 1 Index means 1 lookup in the range. 2 Index means 2 lookups in the range (current and next).
 // - Accumulator: whether the algorithm uses an accumulator variable or not.
 // - Reduce/Transform: Refers to kind of outcome expected, another range of same size (Transform) or final structure/value from iterating the range (reduce).
+//
+// Video covering Algorithm Intuition table: https://youtu.be/48gV1SNm3WA?t=3911
 
 // --------------------
 // 1 Index accumulators
