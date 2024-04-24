@@ -31,8 +31,11 @@ void AdjacentTransform();
 void OtherAlgorithms();
 
 void File();
-void FileStream();
+void FileStreams();
 void FileSystem();
+
+void StandardStreamObjects();
+void StringStreams();
 
 int main(int argc, char* argsv[])
 {
@@ -72,8 +75,12 @@ int main(int argc, char* argsv[])
 
     // Files
     File();
-    FileStream();
+    FileStreams();
     FileSystem();
+
+    // Streams
+    StandardStreamObjects();
+    StringStreams();
 
     return 0;
 }

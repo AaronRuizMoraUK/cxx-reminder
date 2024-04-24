@@ -68,16 +68,16 @@ void File()
     // - Pass "w+" to fopen. The file is created if it doesn't exists.
 }
 
-// ---------------
-// C++ file stream
-// ---------------
+// ----------------
+// C++ file streams
+// ----------------
 
 #include <fstream>
 
-void FileStream()
+void FileStreams()
 {
     printf("--------------------------------\n");
-    printf("C++ file stream\n");
+    printf("C++ file streams\n");
     printf("--------------------------------\n");
 
     // Create and write a file
