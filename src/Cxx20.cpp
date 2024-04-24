@@ -14,7 +14,7 @@
 // If the constraint is not satisfied, it will produce a compiler error.
 // There are standard built in concepts, but you can build your own concepts.
 // 
-// Concepts is a much cleaner way than using template traits and static_assets.
+// Concepts is a much cleaner way than using template traits and static_asserts.
 // --------------------------------------------------------------------------------
 
 #include <concepts>
@@ -26,20 +26,20 @@ T Add(T a, T b)
     return a + b;
 }
 
-// Another concept syntax
+// Another syntax for using concepts
 template<std::floating_point T>
 T Add2(T a, T b)
 {
     return a + b;
 }
 
-// Another concept syntax using auto
-auto Add3(std::signed_integral auto a, std::signed_integral auto b)
+// Another syntax using auto, no need to specify template.
+std::signed_integral auto Add3(std::signed_integral auto a, std::signed_integral auto b)
 {
     return a + b;
 }
 
-// Yes concept another syntax
+// Yet another valid syntax for using concepts
 template<typename T>
 T Add4(T a, T b)
     requires (std::integral<T> || std::floating_point<T>)
@@ -54,11 +54,11 @@ T Add5(T a, T b)
     return a + b;
 }
 
-// Creating a concept
+// Defining a concept
 template<typename T>
 concept MyIntegral = std::integral<T>; // <-- Boolean expression evaluated in compilation time. Traits also work here.
 
-// Create a concept to check the arguments passed support operators
+// Define a concept to check the arguments passed support operators
 template <typename T>
 concept Multipliable = requires(T a, T b)
 {
@@ -112,8 +112,6 @@ void Concepts()
 {
     int a = 5;
     int b = 3;
-    unsigned int au = 5;
-    unsigned int bu = 3;
     float af = 5.0f;
     float bf = 3.0f;
     auto result = Add(a, b);
@@ -122,6 +120,10 @@ void Concepts()
     auto result4 = Add4(af, bf);
     auto result5 = Add5(af, bf);
     auto result6 = Add6(a, b);
+
+    // Variables can also be declared using concepts (using auto) and
+    // it won't compile if the type won't pass its constrains.
+    std::integral auto x = Add(10, 20);
 }
 
 // --------------------------------------------------------------------------------
