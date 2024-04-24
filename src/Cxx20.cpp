@@ -15,6 +15,8 @@
 // There are standard built in concepts, but you can build your own concepts.
 // 
 // Concepts is a much cleaner way than using template traits and static_asserts.
+// 
+// https://en.cppreference.com/w/cpp/concepts
 // --------------------------------------------------------------------------------
 
 #include <concepts>
@@ -94,7 +96,7 @@ concept TinyType = requires(T a)
 template <typename T>
 concept TinyType2 = requires(T a)
 {
-    // Using nested requirements it does evaluate the expression.
+    // Using Nested Requirements it does evaluate the expression.
     // Now using double will NOT pass the requirement.
     requires sizeof(T) <= 4;
 };
@@ -102,10 +104,16 @@ concept TinyType2 = requires(T a)
 template<typename T>
 concept Addable = requires(T a, T b)
 {
-    // This is called compound requirement. The result value after + operator must be convertible to int.
+    // This is called Compound Requirement. The result value after + operator must be convertible to int.
     // It doesn't mean that it will convert the result int, it just means that the type used should be able
     // to be converted to int.
     { a + b } -> std::convertible_to<int>;
+};
+
+template <typename T>
+concept HasValueMember = requires {
+    // This is called Type Requirements on type `T`
+    typename T::value; // It must have an inner member named `value`
 };
 
 void Concepts()
