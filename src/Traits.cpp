@@ -55,4 +55,6 @@ void Traits()
 
     Class2 class2;
     Function(class2); // Prints "Implementation for int"
+
+    printf("\n");
 }

@@ -40,6 +40,7 @@ void StringStreams();
 void Traits();
 
 void Concepts();
+void Ranges();
 
 int main(int argc, char* argsv[])
 {
@@ -91,6 +92,7 @@ int main(int argc, char* argsv[])
 
     // C++20
     Concepts();
+    Ranges();
 
     return 0;
 }

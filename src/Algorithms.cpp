@@ -1,9 +1,15 @@
 #include <vector>
 #include <string>
-#include <format>
+#include <algorithm>
 #include <numeric>
 #include <execution>
 
+// Characteristic to classify the algorithms:
+// - Index Viewed: 1 Index means 1 lookup in the range. 2 Index means 2 lookups in the range (current and next).
+// - Accumulator: whether the algorithm uses an accumulator variable or not.
+// - Reduce/Transform: Refers to kind of outcome expected, another range of same size (Transform) or final structure/value from iterating the range (reduce).
+//
+// Video covering Algorithm Intuition table: https://youtu.be/48gV1SNm3WA?t=3911
 
 namespace
 {
@@ -16,13 +22,6 @@ namespace
         }
     }
 }
-
-// Characteristic to classify the algorithms:
-// - Index Viewed: 1 Index means 1 lookup in the range. 2 Index means 2 lookups in the range (current and next).
-// - Accumulator: whether the algorithm uses an accumulator variable or not.
-// - Reduce/Transform: Refers to kind of outcome expected, another range of same size (Transform) or final structure/value from iterating the range (reduce).
-//
-// Video covering Algorithm Intuition table: https://youtu.be/48gV1SNm3WA?t=3911
 
 // --------------------
 // 1 Index accumulators
@@ -452,6 +451,17 @@ void OtherAlgorithms()
             return element < 0;
         });
     std::printf("std::none_of elements are negative: %s\n", result ? "YES" : "NO");
+
+    std::vector<int> numbersDoubled = numbers;
+    std::for_each(numbersDoubled.begin(), numbersDoubled.end(), [](int& element) { element *= 2; });
+    std::printf("Input doubled: ");
+    PrintContainer(numbersDoubled);
+    std::printf("\n");
+
+    std::sort(numbersDoubled.begin(), numbersDoubled.end());
+    std::printf("Input doubled sorted: ");
+    PrintContainer(numbersDoubled);
+    std::printf("\n");
 
     std::vector<int> iotaOutput(10);
     std::iota(iotaOutput.begin(), iotaOutput.end(), -3); // -3 is first element, then subsequent elements are +1 until the end of the range: -3, -2, -1, etc.
