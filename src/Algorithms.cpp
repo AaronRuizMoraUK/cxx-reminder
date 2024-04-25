@@ -160,7 +160,7 @@ void InclusiveScan_ExclusiveScan()
     // std::inclusive_scan is the same but it also supports parallel execution, so the operation performs needs
     // to be associative and commutative as the order of execution might not be sequential.
     std::inclusive_scan(numbers.cbegin(), numbers.cend(), transformedNumbers.begin());
-    std::printf("std::partial_sum: ");
+    std::printf("std::inclusive_scan: ");
     PrintContainer(transformedNumbers);
     std::printf("\n");
 
@@ -190,10 +190,10 @@ void Find()
     std::printf("\n");
 
     auto it = std::find(numbers.cbegin(), numbers.cend(), 34);
-    std::printf("Value 34 %s\n", it != numbers.end() ? "found" : "not found");
+    std::printf("std::find: Value 34 %s\n", it != numbers.end() ? "found" : "not found");
 
     it = std::find(numbers.cbegin(), numbers.cend(), 102);
-    std::printf("Value 102 %s\n", it != numbers.end() ? "found" : "not found");
+    std::printf("std::find: Value 102 %s\n", it != numbers.end() ? "found" : "not found");
 
     // --------------------------------------------------------
     // There are also the parallel execution versions.
@@ -369,7 +369,7 @@ void AdjacentFind()
     // Default comparison operator: std::equal_to()
 
     auto it = std::adjacent_find(numbers.begin(), numbers.end());
-    std::printf("Did it find 2 consecutive elements that are equal? %s\n", it != numbers.end() ? "YES" : "NO");
+    std::printf("std::adjacent_find: Did it find 2 consecutive elements that are equal? %s\n", it != numbers.end() ? "YES" : "NO");
 
     it = std::adjacent_find(numbers.begin(), numbers.end(),
         // Binary operator to compare 2 consecutive elements
@@ -377,7 +377,7 @@ void AdjacentFind()
         {
             return element1 == element2 / 5; // Stops when finds one element that is 5 times smaller than its consecutive.
         });
-    std::printf("Did it find 2 consecutive elements where first is 5 times smaller than the second? %s\n", it != numbers.end() ? "YES" : "NO");
+    std::printf("std::adjacent_find: Did it find 2 consecutive elements where first is 5 times smaller than the second? %s\n", it != numbers.end() ? "YES" : "NO");
 
     // --------------------------------------------------------
     // There are also the parallel execution versions.
@@ -454,12 +454,12 @@ void OtherAlgorithms()
 
     std::vector<int> numbersDoubled = numbers;
     std::for_each(numbersDoubled.begin(), numbersDoubled.end(), [](int& element) { element *= 2; });
-    std::printf("Input doubled: ");
+    std::printf("std::for_each: Input doubled: ");
     PrintContainer(numbersDoubled);
     std::printf("\n");
 
     std::sort(numbersDoubled.begin(), numbersDoubled.end());
-    std::printf("Input doubled sorted: ");
+    std::printf("std::sort: Input doubled sorted: ");
     PrintContainer(numbersDoubled);
     std::printf("\n");
 

@@ -25,7 +25,7 @@ namespace
 //
 // Threads allow multiple functions to execute concurrently.
 
-void MainThread(int id, int seconds)
+static void MainThread(int id, int seconds)
 {
     printf("Thread %d) Running for %d seconds (%s)\n", id, seconds, GetNativeThreadId().c_str());
     std::this_thread::sleep_for(std::chrono::seconds(seconds));
@@ -65,11 +65,11 @@ void Threads()
 //
 // Used to protect shared data from being simultaneously accessed by multiple threads.
 
-int g_counter = 0;
-std::mutex g_mutex;
-std::recursive_mutex g_recursiveMutex;
+static int g_counter = 0;
+static std::mutex g_mutex;
+static std::recursive_mutex g_recursiveMutex;
 
-void MainMutex(int id, int increment)
+static void MainMutex(int id, int increment)
 {
     g_mutex.lock();
 
@@ -80,7 +80,7 @@ void MainMutex(int id, int increment)
     g_mutex.unlock();
 }
 
-void MainMutexUsingLock(int id, int increment)
+static void MainMutexUsingLock(int id, int increment)
 {
     // The mutex is locked/unlocked by the scoped of 'lock' variable.
     // Mutex is locked at construction time, and unlocked when 'lock' is destroys
@@ -92,7 +92,7 @@ void MainMutexUsingLock(int id, int increment)
     printf("%d\n", g_counter);
 }
 
-void MainRecursiveMutex(int id, int increment)
+static void MainRecursiveMutex(int id, int increment)
 {
     // Recursive mutex allows the thread that owns the mutex to lock again.
     std::lock_guard<std::recursive_mutex> lock(g_recursiveMutex);
@@ -109,7 +109,7 @@ void MainRecursiveMutex(int id, int increment)
     }
 }
 
-void MainMutexUsingUniqueLock(int id, int increment)
+static void MainMutexUsingUniqueLock(int id, int increment)
 {
     // Use std::lock_guard when you need a simple, lightweight solution for locking a mutex 
     // for the duration of a scope without the need for manual lock control or deferred locking.
@@ -409,14 +409,14 @@ void Atomics()
 // modifies a shared variable (the condition) and notifies the std::condition_variable.
 // std::condition_variable only works with std::unique_lock.
 
-int g_sharedValueForCondition = 0;
-std::condition_variable g_conditionVar;
-std::mutex g_conditionVarMutex; // This mutex is used for three purposes:
+static int g_sharedValueForCondition = 0;
+static std::condition_variable g_conditionVar;
+static std::mutex g_conditionVarMutex; // This mutex is used for three purposes:
                                 // 1) to synchronize accesses g_sharedValueForCondition
                                 // 2) to synchronize accesses to printf
                                 // 3) for the condition variable g_conditionVar
 
-void MainCVWaits(int id)
+static void MainCVWaits(int id)
 {
     // Method 1 using condition variable
     // 1. Acquire a std::unique_lock on the mutex used to protect the shared variable used for the condition.
@@ -433,7 +433,7 @@ void MainCVWaits(int id)
     printf("Wait Thread %d) Finished waiting. g_sharedValueForCondition == 1\n", id);
 }
 
-void MainCVWaitsCompact(int id)
+static void MainCVWaitsCompact(int id)
 {
     // Method 2 using condition variable
     // 1. Acquire a std::unique_lock on the mutex used to protect the shared variable used for the condition.
@@ -447,7 +447,7 @@ void MainCVWaitsCompact(int id)
     printf("Wait Thread %d) Finished waiting. g_sharedValueForCondition == 1\n", id);
 }
 
-void MainCVSignals()
+static void MainCVSignals()
 {
     std::this_thread::sleep_for(std::chrono::seconds(1));
     {
@@ -509,7 +509,7 @@ void ConditionalVariables()
 // synchronization of data between threads and the management of asynchronous operations, making it
 // easier to write concurrent C++ applications.
 
-void MainPromiseProviderAccumulate(
+static void MainPromiseProviderAccumulate(
     const std::vector<int>& numbers,
     std::promise<int> promiseAccumulate)
 {
@@ -517,7 +517,7 @@ void MainPromiseProviderAccumulate(
     promiseAccumulate.set_value(sum); // Notify future
 }
 
-void MainDoWork(std::promise<void> barrier)
+static void MainDoWork(std::promise<void> barrier)
 {
     std::this_thread::sleep_for(std::chrono::seconds(1));
     barrier.set_value(); // Notify future, no need to set an actual value.

@@ -213,12 +213,12 @@ void Ranges()
     // ----------------------
     // Find
     auto it = std::ranges::find(numbers, 34);
-    std::printf("Value 34 %s\n", it != numbers.end() ? "found" : "not found");
+    std::printf("std::ranges:find: Value 34 %s\n", it != numbers.end() ? "found" : "not found");
 
     // ----------------------
     // AdjacentFind
     it = std::ranges::adjacent_find(numbers);
-    std::printf("Did it find 2 consecutive elements that are equal? %s\n", it != numbers.end() ? "YES" : "NO");
+    std::printf("std::ranges:adjacent_find: Did it find 2 consecutive elements that are equal? %s\n", it != numbers.end() ? "YES" : "NO");
 
     // ----------------------
     // Other Algorithms
@@ -245,12 +245,12 @@ void Ranges()
 
     std::vector<int> numbersDoubled = numbers;
     std::ranges::for_each(numbersDoubled, [](int& element) { element *= 2; });
-    std::printf("Input doubled: ");
+    std::printf("std::ranges::for_each: Input doubled: ");
     PrintContainer(numbersDoubled);
     std::printf("\n");
 
     std::ranges::sort(numbersDoubled);
-    std::printf("Input doubled sorted: ");
+    std::printf("std::ranges::sort: Input doubled sorted: ");
     PrintContainer(numbersDoubled);
     std::printf("\n");
 }
