@@ -11,12 +11,27 @@
 
 namespace
 {
-    template<class T>
+    struct Point
+    {
+        int x;
+        int y;
+    };
+
+    template<typename T>
     void PrintContainer(const T& container)
     {
         for (const auto& element : container)
         {
             std::printf("%d ", element);
+        }
+    }
+
+    template<>
+    void PrintContainer<std::vector<Point>>(const std::vector<Point>& container)
+    {
+        for (const auto& element : container)
+        {
+            std::printf("(%d, %d) ", element.x, element.y);
         }
     }
 }
@@ -152,6 +167,8 @@ void Concepts()
 // --------------------------------------------------------------------------------
 // Ranges
 // 
+// A range is just an iterable sequence.
+// 
 // Algorithms in C++20 come in 2 flavors:
 // - Using iterator pairs (std): These are the regular algorithms from C++ that takes begin and
 //   end iterators.
@@ -161,7 +178,7 @@ void Concepts()
 // NOTE: The algorithms in std::ranges are overloaded to be able to pass both the iterator pair
 // or the container. Passing the container is simpler, BUT if using iterator pair, prefer the
 // std::ranges version over the std version, this because the std::ranges version will use C++20
-// concepts to do extra validations that the iterators passed are correct.
+// concepts to do validations that the iterators passed are correct.
 // 
 // Not all reduce/transform algorithms (see Algorithms.cpp) have been adapted to ranges in C++20:
 // 
@@ -176,6 +193,8 @@ void Concepts()
 // X iota
 // 
 // --------------------------------------------------------------------------------
+
+#include <ranges>
 
 void Ranges()
 {
@@ -252,6 +271,142 @@ void Ranges()
     std::ranges::sort(numbersDoubled);
     std::printf("std::ranges::sort: Input doubled sorted: ");
     PrintContainer(numbersDoubled);
+    std::printf("\n");
+
+    std::printf("\n");
+}
+
+void RangeProjections()
+{
+    // Projections are callable functions that can be passed to std::ranges algorithms.
+    // The projection receives the element of container and whatever it returns it's
+    // going to be used for the algorithm, instead of the element itself.
+ 
+    // For example, given a Point with X and Y members, sort a container of points by their X.
+    const std::vector<Point> points = { {2, 3}, {1, 7}, {8, -2}, {4, 0} };
+    std::printf("Input: ");
+    PrintContainer(points);
+    std::printf("\n");
+
+    std::vector<Point> pointsSortedByX = points;
+
+    std::ranges::sort(pointsSortedByX,
+        [](int x1, int x2) // <-- elements received here are whatever the projection returns.
+        {
+            return x1 < x2;
+        }, 
+        [] (const Point& element) // <-- This is the projection, it returns the X member of the point.
+        {
+            return element.x; // This can return whatever we want.
+        });
+    std::printf("std::ranges::sort: Input sorted by X: ");
+    PrintContainer(pointsSortedByX);
+    std::printf("\n");
+
+    pointsSortedByX = points;
+
+    // If the projection is only a member, then you can pass the member directly like this.
+    std::ranges::sort(pointsSortedByX, std::less{}, &Point::x);
+    std::printf("std::ranges::sort: Input sorted by X: ");
+    PrintContainer(pointsSortedByX);
+    std::printf("\n");
+
+    // Another example, use std::range::for_each to print only the Y member of points.
+    std::printf("std::ranges::for_each: Print Y element of points:");
+    std::ranges::for_each(points,
+        [](int y)
+        {
+            printf(" %d", y);
+        },
+        &Point::y);
+    std::printf("\n");
+
+    std::printf("\n");
+}
+
+void RangeViews()
+{
+    // A Range View is a lightweight object that is like a window of a Range, without owning its content.
+    //
+    // For a list C++20 views, see Range Adaptors section in https://en.cppreference.com/w/cpp/ranges
+
+    const std::vector<int> numbers = { 2, 6, 1, 5, 34, 12, 65, 21 };
+    std::printf("Input: ");
+    PrintContainer(numbers);
+    std::printf("\n");
+
+    // Filter View
+    // 
+    // This creates a view that filters the container.
+    // For example, only elements greater than 5 will remain.
+    // 
+    // IMPORTANT: There is NO computation at this point at all. The computation is done later when
+    // using the view.
+    std::ranges::filter_view numbersFiltedView = 
+        std::ranges::filter_view(numbers, [](int element) { return element >= 5; });
+
+    std::printf("std::ranges::filter_view >=5: ");
+    for (const auto& filteredNumber : numbersFiltedView) // <-- IMPORTANT: Computation of the view happens here!
+    {
+        printf(" %d", filteredNumber);
+    }
+    std::printf("\n");
+
+    // ----------------------
+    // Range Adaptors
+    // 
+    // An easier way to use views is with its Range Adaptors version.
+    //
+    // From this:
+    //    std::ranges::filter_view numbersFiltedView =
+    //        std::ranges::filter_view(...);
+    // 
+    // To this:
+    //    auto numbersFiltedView = std::views::filter(...);
+    //
+    // Notice now it's using "std::views::filter" and the variable is an auto (which resolves to std::ranges::filter_view).
+    // These adaptors in std::views namespace are more intuitive to use. Some views in std::ranges require
+    // convoluted templates, but the adapters std::views simplify them.
+    // ----------------------
+
+    // Transform View
+    // 
+    // This creates a view that transforms all the elements of the container,
+    // for example multiply the elements by 10. It won't modify the container itself.
+    auto numbersTransformView = 
+        std::views::transform(numbers, [](int element) { return element * 10; });
+
+    std::printf("std::views::transform 10x: ");
+    PrintContainer(numbersTransformView); // Computation is done inside PrintContainer when iterating over the view.
+    std::printf("\n");
+
+    // Take View
+    // 
+    // This creates a view of the first X elements of the container.
+    // For example, first 5 elements.
+    auto numbersTakeView = std::views::take(numbers, 5);
+
+    std::printf("std::views::take 5: ");
+    PrintContainer(numbersTakeView); // Computation is done inside PrintContainer when iterating over the view.
+    std::printf("\n");
+
+    // Take While View
+    // 
+    // This creates a view that takes elements as long as the predicate condition is met.
+    // For example, take elements while elements are even.
+    auto numbersTakeWhileView = 
+        std::views::take_while(numbers, [](int element) { return element % 2 == 0; });
+
+    std::printf("std::views::take_while even: ");
+    PrintContainer(numbersTakeWhileView); // Computation is done inside PrintContainer when iterating over the view.
+    std::printf("\n");
+
+    // Other views:
+    // - Drop View (std::views::drop) will drop the first X number of elements.
+    // - Drop While View (std::views::drop_while) will drop elements as long as the predicate condition is met.
+    // - Keys View (std::views::keys) will get all the key elements of the container (when container is using pair, tuple...)
+    // - Values View (std::views::values) will get all the value elements of the container (when container is using pair, tuple...)
+
     std::printf("\n");
 }
 

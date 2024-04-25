@@ -41,6 +41,8 @@ void Traits();
 
 void Concepts();
 void Ranges();
+void RangeProjections();
+void RangeViews();
 
 int main(int argc, char* argsv[])
 {
@@ -93,6 +95,8 @@ int main(int argc, char* argsv[])
     // C++20
     Concepts();
     Ranges();
+    RangeProjections();
+    RangeViews();
 
     return 0;
 }
