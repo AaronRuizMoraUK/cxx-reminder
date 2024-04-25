@@ -46,6 +46,7 @@ void Ranges();
 void RangeProjections();
 void RangeViews();
 void RangeViewCompositionAndPipeOperator();
+void RangeFactories();
 
 int main(int argc, char* argsv[])
 {
@@ -104,6 +105,7 @@ int main(int argc, char* argsv[])
     RangeProjections();
     RangeViews();
     RangeViewCompositionAndPipeOperator();
+    RangeFactories();
 
     return 0;
 }

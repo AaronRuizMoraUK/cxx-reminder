@@ -315,7 +315,10 @@ void RangeViewCompositionAndPipeOperator()
     Print<int>(myView); // Computation is done inside Print when iterating over the view.
     std::printf("\n");
 
+    // -----------------
     // A much more readable syntax is using the pipe operator.
+    // With the pipe operator the views don't need to receive the collection.
+
     auto myViewPiped = numbers
         | std::views::filter([](int element) { return element % 2 == 0; })
         | std::views::transform([](int element) { return element * element; });
@@ -325,7 +328,7 @@ void RangeViewCompositionAndPipeOperator()
     std::printf("\n");
 
     // -----------------
-    // Some cool operations with range views
+    // Some cool queries with views
 
     const std::vector<std::pair<std::string, int>> students = { {"Paco", 15}, {"Lucy", 12}, {"John", 14}, {"Cora", 15} };
 
@@ -334,7 +337,7 @@ void RangeViewCompositionAndPipeOperator()
     std::printf("\n");
 
     std::printf("Students values in reverse: ");
-    Print<int>(students | std::views::values | std::views::reverse);
+    Print<int>(students | std::views::values | std::views::reverse); // NOTE: reverse view works if container support reverse iterators
     std::printf("\n");
 
     std::printf("Students keys before letter M: ");
@@ -343,5 +346,39 @@ void RangeViewCompositionAndPipeOperator()
             return name.front() < 'M';
         };
     Print<std::string>(students | std::views::keys | std::views::filter(beforeM));
+    std::printf("\n");
+
+    std::printf("\n");
+}
+
+void RangeFactories()
+{
+    // There are some view factories that can be used to generate views.
+
+    // Iota Range Factory
+    // 
+    // std::views::iota generates the range [X, Y)
+    auto generatedView = std::views::iota(3, 7); // Nothing computed here!
+
+    std::printf("std::views::iota(3, 7): ");
+    Print<int>(generatedView); // Range produced when it's iterated inside the Print!
+    std::printf("\n");
+
+    // Alternative usage of iota
+    // 
+    // Iota generating infinite range starting from 3 (numbers are generate lazily on the fly),
+    // then pipe it to a take view to obtain the first 4.
+    std::printf("std::views::iota(3) | std::views::take(4): ");
+    Print<int>(std::views::iota(3) | std::views::take(4));
+    std::printf("\n");
+
+    std::printf("\n");
+
+    // Other range factories:
+    // - std::views::empty generates an empty view with no elements.
+    // - std::single_view generates a view that contains a single element of a specified value.
+
+    std::printf("std::views::single(3): ");
+    Print<int>(std::views::single(3));
     std::printf("\n");
 }
