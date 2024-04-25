@@ -10,6 +10,7 @@ set(SOURCE_FILE_LIST
     src/Streams.cpp
     src/Files.cpp
     src/Traits.cpp
+    src/Ranges.cpp
     src/Cxx11.cpp
     src/Cxx14.cpp
     src/Cxx17.cpp

@@ -38,11 +38,14 @@ void StandardStreamObjects();
 void StringStreams();
 
 void Traits();
+void TraitsConcepts();
 
 void Concepts();
+
 void Ranges();
 void RangeProjections();
 void RangeViews();
+void RangeViewCompositionAndPipeOperator();
 
 int main(int argc, char* argsv[])
 {
@@ -91,12 +94,16 @@ int main(int argc, char* argsv[])
 
     // Traits
     Traits();
+    TraitsConcepts();
 
     // C++20
     Concepts();
+
+    // C++20 Ranges
     Ranges();
     RangeProjections();
     RangeViews();
+    RangeViewCompositionAndPipeOperator();
 
     return 0;
 }

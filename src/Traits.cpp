@@ -58,3 +58,36 @@ void Traits()
 
     printf("\n");
 }
+
+// --------------------------------------------------------------------------------
+// Using concepts from C++20 no need to rely on function override trick
+// --------------------------------------------------------------------------------
+
+#include <concepts>
+
+// Function implementation for doubles.
+template<typename T>
+    requires std::is_same_v<double, typename MyTrait<T>::MyType>
+void FunctionConcepts(T var)
+{
+    printf("Implementation for double\n");
+}
+
+// Function implementation for integers.
+template<typename T>
+    requires std::is_same_v<int, typename MyTrait<T>::MyType>
+void FunctionConcepts(T var)
+{
+    printf("Implementation for int\n");
+}
+
+void TraitsConcepts()
+{
+    Class1 class1;
+    FunctionConcepts(class1); // Prints "Implementation for double"
+
+    Class2 class2;
+    FunctionConcepts(class2); // Prints "Implementation for int"
+
+    printf("\n");
+}
