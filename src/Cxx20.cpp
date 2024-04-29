@@ -263,8 +263,6 @@ CoroutineType func1()
     co_await std::suspend_always{}; // Suspension point #2
 
     printf("Doing third thing...\n");
-
-    printf("func1 completed!\n");
     co_return 0;
 }
 
