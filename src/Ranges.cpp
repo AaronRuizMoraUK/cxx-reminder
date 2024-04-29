@@ -165,9 +165,9 @@ void Ranges()
 
 void RangeProjections()
 {
-    // Projections are callable functions that can be passed to std::ranges algorithms.
-    // The projection receives the element of container and whatever it returns it's
-    // going to be used for the algorithm, instead of the element itself.
+    // A projection is a callable function that can be passed to all std::ranges algorithms.
+    // The projection receives the element of the container and whatever it returns it's
+    // going to be used for the algorithm (instead of the element itself).
  
     // For example, given a Point with X and Y members, sort a container of points by their X.
     const std::vector<Point> points = { {2, 3}, {1, 7}, {8, -2}, {4, 0} };
@@ -192,7 +192,7 @@ void RangeProjections()
 
     pointsSortedByX = points;
 
-    // If the projection is only a member, then you can pass the member directly like this.
+    // If the projection is only a member, then there is a simpler syntax by pointing to the member directly like this.
     std::ranges::sort(pointsSortedByX, std::less{}, &Point::x);
     std::printf("std::ranges::sort: Input sorted by X: ");
     Print(pointsSortedByX);
@@ -251,13 +251,13 @@ void RangeViews()
     //
     // Notice now it's using "std::views::filter" and the variable is an auto (which resolves to std::ranges::filter_view).
     // These adaptors in std::views namespace are more intuitive to use. Some views in std::ranges require
-    // convoluted templates, but the adapters std::views simplify them.
+    // passing complicated templates, but the adapters std::views simplify them.
     // ----------------------
 
     // Transform View
     // 
     // This creates a view that transforms all the elements of the container,
-    // for example multiply the elements by 10. It won't modify the container itself.
+    // for example, multiply the elements by 10. It won't modify the container itself.
     auto numbersTransformView = 
         std::views::transform(numbers, [](int element) { return element * 10; });
 
@@ -299,7 +299,7 @@ void RangeViews()
 
 void RangeViewCompositionAndPipeOperator()
 {
-    // Views can be concatenated to compose a much more complex views.
+    // Views can be concatenated to compose much more complex views.
     // All without modifying the original container, as Views do not own the content.
 
     const std::vector<int> numbers = { 2, 6, 1, 5, 34, 12, 65, 21 };
@@ -329,7 +329,7 @@ void RangeViewCompositionAndPipeOperator()
     std::printf("\n");
 
     // -----------------
-    // Some cool queries with views
+    // Other cool queries with views
 
     const std::vector<std::pair<std::string, int>> students = { {"Paco", 15}, {"Lucy", 12}, {"John", 14}, {"Cora", 15} };
 
