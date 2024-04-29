@@ -165,6 +165,9 @@ void Concepts()
 // 
 // It's expected that C++23 will provide high level coroutine types built into C++.
 
+// -------------------------
+// Let's create a simple coroutine type using coroutine infrastructure.
+
 template<typename T>
 struct Promise;
 
@@ -250,6 +253,9 @@ struct Promise
 
     T m_value = 0;
 };
+
+// -------------------------
+// Let's create functions and make them coroutines.
 
 // What makes functions a coroutine is two things:
 // 1. It uses at least one coroutine keyword: co_await, co_yield or co_return.
