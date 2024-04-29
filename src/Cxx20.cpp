@@ -348,7 +348,7 @@ void Coroutines()
     f3.m_handle();
     printf("%d\n", f3.m_handle.promise().m_value); // 48
     printf("\n");
-    printf("Is func3 done? %s\n", f2.m_handle.done() ? "YES" : "NO"); // prints "NO"
+    printf("Is func3 done? %s\n", f3.m_handle.done() ? "YES" : "NO"); // prints "YES"
     printf("\n");
 
     printf("Coroutines Done!\n");
