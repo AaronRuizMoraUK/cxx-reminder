@@ -419,7 +419,7 @@ void AdjacentReduce()
         {
             return currentElement * nextElement;
         });
-    std::printf("std::adjacent_reduce: %s\n", result.c_str());
+    std::printf("adjacent_reduce: %s\n", result.c_str());
 }
 
 // Indexes Viewed: 2
