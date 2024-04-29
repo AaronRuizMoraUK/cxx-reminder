@@ -70,14 +70,14 @@ namespace
 // 
 // Not all reduce/transform algorithms (see Algorithms.cpp) have been adapted to ranges in C++20:
 // 
-// X Reduce(); TransformReduce();                     // Index 1 / Accumulator YES / Operation Reduce
-// X InclusiveScan_ExclusiveScan();                   // Index 1 / Accumulator YES / Operation Transform
-// - Find();                                          // Index 1 / Accumulator NO  / Operation Reduce
-// - Transform();                                     // Index 1 / Accumulator NO  / Operation Transform
-// X AdjacentReduce();                                // Index 2 / Accumulator YES / Operation Reduce
-// X TransformInclusiveScan_TransformExclusiveScan(); // Index 2 / Accumulator YES / Operation Transform
-// - AdjacentFind();                                  // Index 2 / Accumulator NO  / Operation Reduce
-// X AdjacentTransform();                             // Index 2 / Accumulator NO  / Operation Transform
+// X Reduce(); TransformReduceWith2Ranges();        // Index 1 / Accumulator YES / Operation Reduce
+// X InclusiveScan_ExclusiveScan();                 // Index 1 / Accumulator YES / Operation Transform
+// - Find();                                        // Index 1 / Accumulator NO  / Operation Reduce
+// - Transform(); TransformWith2Ranges();           // Index 1 / Accumulator NO  / Operation Transform
+// X AdjacentReduce();                              // Index 2 / Accumulator YES / Operation Reduce
+// X AdjacentInclusiveScan_AdjacentExclusiveScan(); // Index 2 / Accumulator YES / Operation Transform
+// - AdjacentFind();                                // Index 2 / Accumulator NO  / Operation Reduce
+// X AdjacentTransform();                           // Index 2 / Accumulator NO  / Operation Transform
 // X iota
 // 
 // --------------------------------------------------------------------------------
@@ -103,6 +103,7 @@ void Ranges()
     Print(transformedNumbers);
     std::printf("\n");
 
+    // Transform with 2 ranges
     const std::vector<int> numbers2 = { 2, 2, 2, 2, 2, 2, 2, 2 };
 
     std::ranges::transform(numbers, numbers2, transformedNumbers.begin(),

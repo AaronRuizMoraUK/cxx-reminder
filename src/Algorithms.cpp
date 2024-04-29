@@ -21,6 +21,76 @@ namespace
             std::printf("%d ", element);
         }
     }
+
+    // std::adjacent_reduce doesn't exist in STL, but it can be written
+    // as an specialization of transform_reduce.
+    template<class I, class A, class R, class T>
+    auto adjacent_reduce(I begin, I end, A accInit, R reduce, T transform)
+    {
+        // NOTE: Using a copy of begin instead of ++begin in the third parameter because the
+        // the order of execution of parameters in a function call is not determined. So if
+        // the third argument would be executed first, that would affect the value passed to
+        // the first argument. Making a copy avoids this issue.
+        I beginCopy = begin;
+
+        return std::transform_reduce(begin, --end, ++beginCopy, accInit, reduce, transform);
+    }
+
+    // std::adjacent_inclusive_scan doesn't exist in STL.
+    // 
+    // NOTE: In the video covering the Algorithm intuition table it says it's
+    //       std::transform_inclusive_scan, but it's not the same, because it only offers
+    //       an unary operator for transform, not a binary one with the adjacent
+    //       elements.
+    template<class I, class O, class BinOp1, class BinOp2>
+    auto adjacent_inclusive_scan(I begin, I end, O out, BinOp1 accOp, BinOp2 transformOp)
+    {
+        if (begin != end)
+        {
+            auto prev = *begin;
+            auto acc = *begin; // Accumulator starts with first element
+            *out = prev;
+            while (++begin != end)
+            {
+                acc = accOp(acc, transformOp(*begin, prev));
+                *++out = acc;
+                prev = std::move(*begin);
+            }
+            ++out;
+        }
+        return out;
+    }
+
+    // std::adjacent_exclusive_scan doesn't exist in STL.
+    // 
+    // NOTE: In the video covering the Algorithm intuition table it says it's
+    //       std::transform_exclusive_scan, but it's not the same, because it only offers
+    //       an unary operator for transform, not a binary one with the adjacent
+    //       elements.
+    template<class I, class O, class A, class BinOp1, class BinOp2>
+    auto adjacent_exclusive_scan(I begin, I end, O out, A accInit, BinOp1 accOp, BinOp2 transformOp)
+    {
+        if (begin != end)
+        {
+            auto prev = *begin;
+            auto acc = accInit; // Accumulator starts with the provided initial value
+            *out = acc;
+
+            // First accumulation operation with first element before starting loop using adjacent elements.
+            acc = accOp(acc, *begin);
+            *++out = acc;
+            --end; // Since out has 1 more element due to the initial accumulation value, decrease the end by 1.
+
+            while (++begin != end)
+            {
+                acc = accOp(acc, transformOp(*begin, prev));
+                *++out = acc;
+                prev = std::move(*begin);
+            }
+            ++out;
+        }
+        return out;
+    }
 }
 
 // --------------------
@@ -67,12 +137,29 @@ void Reduce()
     std::printf("std::reduce: %d\n", sum2);
     int sum3 = std::reduce(std::execution::par, numbers.cbegin(), numbers.cend(), 0); // In parallel
     std::printf("std::reduce: %d\n", sum3);
+
+    // There is also the transform version. Same as std::reduce, but it can transform each
+    // element first before doing the operation with the accumulator.
+    std::string result2 = std::transform_reduce(numbers.cbegin(), numbers.cend(),
+        // Accumulator is a string
+        std::string("All numbers: "),
+        // Transform accumulator and transformed current element
+        [](std::string accumulator, std::string transformedElement)
+        {
+            return std::move(accumulator) + std::move(transformedElement) + " ,";
+        },
+        // Transform current element
+        [](int currentElement)
+        {
+            return std::to_string(currentElement);
+        });
+    std::printf("std::transform_reduce: %s\n", result2.c_str());
 }
 
-// Indexes Viewed: 1 (but may be looking at more than one range)
+// Indexes Viewed: 1 (same index but looking at 2 ranges)
 // Accumulator: YES
 // Operation: Reduce
-void TransformReduce()
+void TransformReduceWith2Ranges()
 {
     const std::vector<int> numbers1 = { 2, 6, 1, 5, 34, 12, 65, 21 };
     const std::vector<int> numbers2 = { 2, 2, 2, 2, 2, 2, 2, 2 };
@@ -164,6 +251,23 @@ void InclusiveScan_ExclusiveScan()
     PrintContainer(transformedNumbers);
     std::printf("\n");
 
+    // There is also the transform version. Same as std::inclusive_scan, but it can transform each
+    // element first before doing the operation with the accumulator.
+    std::transform_inclusive_scan(numbers.cbegin(), numbers.cend(), transformedNumbers.begin(),
+        // Transform accumulator and transformed current element
+        [](int accumulator, int transformedElement)
+        {
+            return accumulator + transformedElement;
+        },
+        // Transform current element
+        [](int currentElement)
+        {
+            return currentElement * 2;
+        });
+    std::printf("std::transform_inclusive_scan: ");
+    PrintContainer(transformedNumbers);
+    std::printf("\n");
+
     // --------------------------------------------------------
     // std::exclusive_scan is the same, but it specifies the initial value of the accumulator for the first
     // element of the output, then it does the same as std::inclusive_scan.
@@ -171,6 +275,25 @@ void InclusiveScan_ExclusiveScan()
     // It also supports parallel execution.
     std::exclusive_scan(numbers.cbegin(), numbers.cend(), transformedNumbers.begin(), 0 /*initial value of accumulator*/);
     std::printf("std::exclusive_scan: ");
+    PrintContainer(transformedNumbers);
+    std::printf("\n");
+
+    // There is also the transform version. Same as std::exclusive_scan, but it can transform each
+    // element first before doing the operation with the accumulator.
+    std::transform_exclusive_scan(numbers.cbegin(), numbers.cend(), transformedNumbers.begin(),
+        // Initial accumulator (won't be transformed)
+        0,
+        // Transform accumulator and transformed current element
+        [](int accumulator, int transformedElement)
+        {
+            return accumulator + transformedElement;
+        },
+        // Transform current element
+        [](int currentElement)
+        {
+            return currentElement * 2;
+        });
+    std::printf("std::transform_exclusive_scan: ");
     PrintContainer(transformedNumbers);
     std::printf("\n");
 }
@@ -199,7 +322,7 @@ void Find()
     // There are also the parallel execution versions.
 }
 
-// Indexes Viewed: 1 (but may be looking at more than one range)
+// Indexes Viewed: 1
 // Accumulator: NO
 // Type: Transform
 void Transform()
@@ -214,7 +337,7 @@ void Transform()
     // Transform each element of input and puts it in the output's element.
     // There is no default operation, unary operator must be specified.
     std::transform(numbers.cbegin(), numbers.cend(), transformedNumbers.begin(),
-        // Transform operation
+        // Unary Transform operation
         [](int element)
         {
             return element * 2;
@@ -224,6 +347,21 @@ void Transform()
     std::printf("\n");
 
     // --------------------------------------------------------
+    // There are also the parallel execution versions.
+}
+
+// Indexes Viewed: 1 (same index but looking at 2 ranges)
+// Accumulator: NO
+// Type: Transform
+void TransformWith2Ranges()
+{
+    const std::vector<int> numbers = { 2, 6, 1, 5, 34, 12, 65, 21 };
+    std::printf("Input: ");
+    PrintContainer(numbers);
+    std::printf("\n");
+
+    std::vector<int> transformedNumbers(numbers.size());
+
     // std::transform also works with looking at more than 1 range
     const std::vector<int> numbers1 = { 2, 6, 1, 5, 34, 12, 65, 21 };
     const std::vector<int> numbers2 = { 2, 2, 2, 2, 2, 2, 2, 2 };
@@ -251,15 +389,6 @@ void Transform()
 // --------------------
 // 2 Index accumulators
 // --------------------
-
-// adjacent_reduce doesn't exist in STL, but it can be written
-// as an specialization of transform_reduce.
-template<class I, class A, class R, class T>
-auto adjacent_reduce(I begin, I end, A initAcc, R reduce, T transform)
-{
-    I beingCopy = begin;
-    return std::transform_reduce(begin, --end, ++beingCopy, initAcc, reduce, transform);
-}
 
 // Indexes Viewed: 2
 // Accumulator: YES
@@ -296,7 +425,7 @@ void AdjacentReduce()
 // Indexes Viewed: 2
 // Accumulator: YES
 // Operation: Transform
-void TransformInclusiveScan_TransformExclusiveScan()
+void AdjacentInclusiveScan_AdjacentExclusiveScan()
 {
     const std::vector<int> numbers = { 2, 6, 1, 5, 34, 12, 65, 21 };
     std::printf("Input: ");
@@ -306,47 +435,44 @@ void TransformInclusiveScan_TransformExclusiveScan()
     std::vector<int> transformedNumbers(numbers.size());
 
     // Accumulator is created with the first element transformed, not specified in parameters.
-    // Then transforms in order each element of the range (starting from the second) and then
+    // Then transforms in order each element of the range (starting from the second) with the previous element and then
     // then does another operation with the accumulator, each operation is stored in both the element and the accumulator.
     // No default operators.
 
-    std::transform_inclusive_scan(numbers.cbegin(), numbers.cend(), transformedNumbers.begin(),
+    adjacent_inclusive_scan(numbers.cbegin(), numbers.cend(), transformedNumbers.begin(),
         // Transform accumulator and transformed current element
         [](int accumulator, int transformedElement)
         {
             return accumulator + transformedElement;
         },
-        // Transform current element
-        [](int currentElement)
+        // Transform current element with the previous element
+        [](int currElement, int prevElement)
         {
-            return currentElement * 2;
+            return currElement * prevElement;
         });
-    std::printf("std::transform_inclusive_scan: ");
+    std::printf("adjacent_inclusive_scan: ");
     PrintContainer(transformedNumbers);
     std::printf("\n");
 
     // --------------------------------------------------------
-    // There are also the parallel execution versions.
-
-    // std::transform_exclusive_scan is the same, but it specifies the initial value of the accumulator for the first
-    // element of the output, then it does the same as std::transform_inclusive_scan.
+    // adjacent_exclusive_scan is the same, but it specifies the initial value of the accumulator for the first
+    // element of the output, then it does the same as adjacent_inclusive_scan.
     // Accumulator must be the same element as the range.
-    // It also supports parallel execution.
 
-    std::transform_exclusive_scan(numbers.cbegin(), numbers.cend(), transformedNumbers.begin(),
+    adjacent_exclusive_scan(numbers.cbegin(), numbers.cend(), transformedNumbers.begin(),
         // Initial accumulator (won't be transformed)
-        1,
+        0,
         // Transform accumulator and transformed current element
         [](int accumulator, int transformedElement)
         {
             return accumulator + transformedElement;
         },
         // Transform current element
-        [](int currentElement)
+        [](int currElement, int prevElement)
         {
-            return currentElement * 2;
+            return currElement * prevElement;
         });
-    std::printf("std::transform_exclusive_scan: ");
+    std::printf("adjacent_exclusive_scan: ");
     PrintContainer(transformedNumbers);
     std::printf("\n");
 }
@@ -373,9 +499,9 @@ void AdjacentFind()
 
     it = std::adjacent_find(numbers.begin(), numbers.end(),
         // Binary operator to compare 2 consecutive elements
-        [](int element1, int element2)
+        [](int currElement, int nextElement)
         {
-            return element1 == element2 / 5; // Stops when finds one element that is 5 times smaller than its consecutive.
+            return currElement == nextElement / 5; // Stops when finds one element that is 5 times smaller than its consecutive.
         });
     std::printf("std::adjacent_find: Did it find 2 consecutive elements where first is 5 times smaller than the second? %s\n", it != numbers.end() ? "YES" : "NO");
 

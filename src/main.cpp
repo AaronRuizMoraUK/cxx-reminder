@@ -20,12 +20,13 @@ void ConditionalVariables();
 void PromiseAndFuture();
 
 void Reduce();
-void TransformReduce();
+void TransformReduceWith2Ranges();
 void InclusiveScan_ExclusiveScan();
 void Find();
 void Transform();
+void TransformWith2Ranges();
 void AdjacentReduce();
-void TransformInclusiveScan_TransformExclusiveScan();
+void AdjacentInclusiveScan_AdjacentExclusiveScan();
 void AdjacentFind();
 void AdjacentTransform();
 void OtherAlgorithms();
@@ -74,14 +75,14 @@ int main(int argc, char* argsv[])
     PromiseAndFuture();
 
     // Algorithms
-    Reduce(); TransformReduce();                     // Index 1 / Accumulator YES / Operation Reduce
-    InclusiveScan_ExclusiveScan();                   // Index 1 / Accumulator YES / Operation Transform
-    Find();                                          // Index 1 / Accumulator NO  / Operation Reduce
-    Transform();                                     // Index 1 / Accumulator NO  / Operation Transform
-    AdjacentReduce();                                // Index 2 / Accumulator YES / Operation Reduce
-    TransformInclusiveScan_TransformExclusiveScan(); // Index 2 / Accumulator YES / Operation Transform
-    AdjacentFind();                                  // Index 2 / Accumulator NO  / Operation Reduce
-    AdjacentTransform();                             // Index 2 / Accumulator NO  / Operation Transform
+    Reduce(); TransformReduceWith2Ranges();        // Index 1 / Accumulator YES / Operation Reduce
+    InclusiveScan_ExclusiveScan();                 // Index 1 / Accumulator YES / Operation Transform
+    Find();                                        // Index 1 / Accumulator NO  / Operation Reduce
+    Transform(); TransformWith2Ranges();           // Index 1 / Accumulator NO  / Operation Transform
+    AdjacentReduce();                              // Index 2 / Accumulator YES / Operation Reduce
+    AdjacentInclusiveScan_AdjacentExclusiveScan(); // Index 2 / Accumulator YES / Operation Transform
+    AdjacentFind();                                // Index 2 / Accumulator NO  / Operation Reduce
+    AdjacentTransform();                           // Index 2 / Accumulator NO  / Operation Transform
     OtherAlgorithms();
 
     // Files
