@@ -164,6 +164,11 @@ void Concepts()
 // how the coroutine works, how it suspends, resumes, etc. And it holds the coroutine handle.
 // 
 // It's expected that C++23 will provide high level coroutine types built into C++.
+// 
+// Good coroutine types are hard to build and get right, it's advised to use third party libraries
+// that provides them. Github projects that offer a collection of coroutine types:
+// - https://github.com/lewissbaker/cppcoro
+// - https://github.com/Quuxplusone/coro 
 
 // -------------------------
 // Let's create a simple coroutine type using coroutine infrastructure.
@@ -321,7 +326,7 @@ void Coroutines()
 
     // Helper lambda to resume coroutine and return value directly.
     // CoroutineType could implement this as a member function.
-    auto resume = [](CoroutineType& f)
+    auto resume = [](const CoroutineType& f)
         {
             f.m_handle.resume();
             return f.m_handle.promise().m_value;
