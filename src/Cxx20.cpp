@@ -305,23 +305,27 @@ void Coroutines()
     auto f2 = func2();
     for (int i = 0; i < 10; ++i) // We just take 10 elements from func2
     {
-        f2.m_handle(); // Same as calling f2.m_handle.resume();
+        // IMPORTANT: Notice numbers are generated lazily, on the fly as we need them.
+        f2.m_handle(); // Same as doing 'f2.m_handle.resume();'
         printf("%d,", f2.m_handle.promise().m_value); // 1,2,3,4,5,6,7,8,9,10,
     }
     printf("\n");
     printf("Is func2 done? %s\n", f2.m_handle.done() ? "YES" : "NO"); // prints "NO"
     printf("\n");
 
+    // Helper lambda to resume coroutine and return value directly.
+    // CoroutineType could implement this as a member function.
+    auto resume = [](CoroutineType& f)
+        {
+            f.m_handle.resume();
+            return f.m_handle.promise().m_value;
+        };
+
     auto f3 = func3();
-    f3.m_handle();
-    printf("%d\n", f3.m_handle.promise().m_value); // 45. Numbers are generated lazily, on the fly as we need them.
-    f3.m_handle();
-    printf("%d\n", f3.m_handle.promise().m_value); // 46
-    f3.m_handle();
-    printf("%d\n", f3.m_handle.promise().m_value); // 47
-    f3.m_handle();
-    printf("%d\n", f3.m_handle.promise().m_value); // 48
-    printf("\n");
+    printf("%d\n", resume(f3)); // 45
+    printf("%d\n", resume(f3)); // 46
+    printf("%d\n", resume(f3)); // 47
+    printf("%d\n", resume(f3)); // 48
     printf("Is func3 done? %s\n", f3.m_handle.done() ? "YES" : "NO"); // prints "YES"
     printf("\n");
 
