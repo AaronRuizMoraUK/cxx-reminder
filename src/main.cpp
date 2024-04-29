@@ -42,6 +42,7 @@ void Traits();
 void TraitsConcepts();
 
 void Concepts();
+void Coroutines();
 
 void Ranges();
 void RangeProjections();
@@ -100,6 +101,7 @@ int main(int argc, char* argsv[])
 
     // C++20
     Concepts();
+    Coroutines();
 
     // C++20 Ranges
     Ranges();

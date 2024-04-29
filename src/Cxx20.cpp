@@ -1,3 +1,5 @@
+#include <iostream>
+#include <cstdio>
 
 // --------------------------------------------------------------------------------
 // Link to C++20 new features cheat-sheet
@@ -137,6 +139,221 @@ void Concepts()
 // --------------------------------------------------------------------------------
 // Coroutines
 // --------------------------------------------------------------------------------
+
+#include <coroutine>
+
+// Coroutines are basically functions that can be paused and resumed.
+// Coroutines are designed to make writing asynchronous code easier.
+// When a coroutine is paused, its state (variables, parameters, execution point, etc.)
+// is saved in heap memory. Then with the use of a handle it can be resumed later.
+// 
+// Note that coroutines do not run concurrently, they still use the stack in such way that:
+// - When paused, the coroutine is removed from stack and its state is stored in heap memory.
+// - When resumed, the coroutine is added back to the stack and it execution is resumed from where it was left off.
+//
+// C++20 new keywords to pause and resume coroutines:
+// - co_await: suspends execution until resumed
+// - co_yield:  suspends execution and returns a value
+// - co_return: completes execution and optionally returns a value
+//
+// If a function uses any of these keywords, it becomes a coroutine. There is no
+// other special syntax for coroutines.
+
+// There are no predefined coroutines types in C++20, you have to create them following
+// the requirements using coroutine infrastructure. A coroutine type basically defines
+// how the coroutine works, how it suspends, resumes, etc. And it holds the coroutine handle.
+// 
+// It's expected that C++23 will provide high level coroutine types built into C++.
+
+// ----------------------------------------------------------
+// This block defines some basic coroutine types
+// ----------------------------------------------------------
+
+// Basic coroutine type with the minimum requirements.
+template<typename P>
+struct CoroType
+{
+    // It's required to declare a type named promise_type
+    using promise_type = P;
+
+    using CoroHandle = std::coroutine_handle<promise_type>;
+
+    CoroType(promise_type& promiseType)
+        : m_handle(CoroHandle::from_promise(promiseType))
+    {
+    }
+
+    ~CoroType()
+    {
+        m_handle.destroy();
+        printf("Handle destroyed!\n");
+    }
+
+    CoroHandle m_handle;
+};
+
+// Abstract base promise type providing 'co_yield value;' support with integers.
+// 
+// NOTE: The member functions are required with the exact naming.
+struct BasePromise
+{
+    // Default action when coroutine is called.
+    // std::suspend_always is an awaitable object. An awaitable object has functions that defines the wait behavior. 
+    // There is also std::suspend_never and users can also define their own awaitable objects.
+    std::suspend_always initial_suspend()
+    {
+        return {};
+    }
+
+    // Whether coroutine state is destroyed at last suspension point.
+    std::suspend_always final_suspend() noexcept
+    {
+        return {};
+    }
+
+    void unhandled_exception() noexcept
+    {
+        std::rethrow_exception(std::current_exception());
+    }
+
+    // It enables the 'co_yield value;' syntax.
+    // The type of 'value' dictates the return type of co_yield.
+    std::suspend_always yield_value(int value)
+    {
+        m_value = value;
+        return {};
+    }
+
+    int m_value = 0;
+
+protected:
+    BasePromise() = default;
+};
+
+// Promise type providing 'co_return;' support without parameters.
+// 
+// NOTE: The member functions are required with the exact naming.
+struct PromiseNoReturn : public BasePromise
+{
+    // Creates the coroutine type object
+    CoroType<PromiseNoReturn> get_return_object()
+    {
+        return CoroType<PromiseNoReturn>(*this);
+    }
+
+    // Necessary when coroutine doesn't return anything.
+    // It enables the 'co_return;' syntax.
+    // 
+    // NOTE: Either 'return_void' or 'return_value' must exist, not both.
+    void return_void()
+    {
+    }
+};
+
+// Promise type providing 'co_return value;' support with integers.
+// 
+// NOTE: The member functions are required with the exact naming.
+struct PromiseReturn : public BasePromise
+{
+    // Creates the coroutine type object
+    CoroType<PromiseReturn> get_return_object()
+    {
+        return CoroType<PromiseReturn>(*this);
+    }
+
+    // Necessary when coroutine returns something.
+    // It enables the 'co_return value;' syntax.
+    // The type of 'value' dictates the return type of co_return.
+    // 
+    // NOTE: Either 'return_void' or 'return_value' must exist, not both.
+    void return_value(int value)
+    {
+        m_value = value;
+    }
+};
+
+using CoroTypeNoReturn = CoroType<PromiseNoReturn>; // Coroutine type supporting 'co_return;' and 'co_yield value;'
+using CoroTypeReturn = CoroType<PromiseReturn>;     // Coroutine type supporting 'co_return value;' and 'co_yield value;'
+
+// ----------------------------------------------------------
+// ----------------------------------------------------------
+
+CoroTypeNoReturn func1()
+{
+    printf("Doing first thing...\n");
+    co_await std::suspend_always{}; // Suspension point #1
+
+    printf("Doing second thing...\n");
+    co_await std::suspend_always{}; // Suspension point #2
+
+    printf("Doing third thing...\n");
+
+    printf("func1 completed!\n");
+
+    // Not necessary. But if this function didn't have any co_await calls,
+    // then co_return needs to be added to make this function a coroutine.
+    //co_return;
+}
+
+// Generates numbers indefinitely
+CoroTypeNoReturn func2()
+{
+    int start = 1;
+    while (true)
+    {
+        co_yield start++;
+    }
+}
+
+CoroTypeReturn func3()
+{
+    co_yield 45;
+    co_yield 46;
+    co_yield 47;
+    co_return 48;
+}
+
+void Coroutines()
+{
+    // f1 is an instance of CoroType and it's got the handle to the coroutine.
+    // This won't execute any statement of func1, this is because promise_type::initial_suspend()
+    // implementation returns std::suspend_always.
+    auto f1 = func1();
+
+    f1.m_handle.resume(); // Runs and hits suspension point #1
+    printf("Is func1 done? %s\n", f1.m_handle.done() ? "YES" : "NO"); // prints "NO"
+    f1.m_handle.resume(); // Runs and hits suspension point #2
+    f1.m_handle.resume(); // Runs and hits end of coroutine.
+    printf("Is func1 done? %s\n", f1.m_handle.done() ? "YES" : "NO"); // prints "YES"
+    //f1.m_handle.resume(); // Error! Trying to resume an ended coroutine.
+    printf("\n");
+
+    auto f2 = func2();
+    for (int i = 0; i < 10; ++i) // We just take 10 elements from func2
+    {
+        f2.m_handle(); // Same as calling f2.m_handle.resume();
+        printf("%d,", f2.m_handle.promise().m_value); // 1,2,3,4,5,6,7,8,9,10,
+    }
+    printf("\n");
+    printf("Is func2 done? %s\n", f2.m_handle.done() ? "YES" : "NO"); // prints "NO"
+    printf("\n");
+
+    auto f3 = func3();
+    f3.m_handle();
+    printf("%d\n", f3.m_handle.promise().m_value); // 45. Numbers are generated lazily, on the fly as we need them.
+    f3.m_handle();
+    printf("%d\n", f3.m_handle.promise().m_value); // 46
+    f3.m_handle();
+    printf("%d\n", f3.m_handle.promise().m_value); // 47
+    f3.m_handle();
+    printf("%d\n", f3.m_handle.promise().m_value); // 48
+    printf("\n");
+    printf("Is func3 done? %s\n", f2.m_handle.done() ? "YES" : "NO"); // prints "NO"
+    printf("\n");
+
+    printf("Coroutines Done!\n");
+    printf("\n");
+}
 
 // --------------------------------------------------------------------------------
 // Modules
