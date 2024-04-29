@@ -55,7 +55,7 @@ namespace
 // --------------------------------------------------------------------------------
 // Ranges
 // 
-// A range is just an iterable sequence.
+// A range is a new feature of C++20 and it's basically an iterable sequence.
 // 
 // Algorithms in C++20 come in 2 flavors:
 // - Using iterator pairs (std): These are the regular algorithms from C++ that takes begin and
