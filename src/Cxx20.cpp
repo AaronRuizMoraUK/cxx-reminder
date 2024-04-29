@@ -251,6 +251,9 @@ struct Promise
     T m_value = 0;
 };
 
+// What makes functions a coroutine is two things:
+// 1. It uses at least one coroutine keyword: co_await, co_yield or co_return.
+// 2. The return type is a coroutine type (uses coroutine infrastructure).
 CoroutineType func1()
 {
     printf("Doing first thing...\n");
@@ -265,7 +268,7 @@ CoroutineType func1()
     co_return 0;
 }
 
-// Generates numbers indefinitely
+// Generates numbers indefinitely.
 // This is a common usage of coroutines, the coroutine is like a number generator
 // and each time the function is called it'll generate the next number.
 CoroutineType func2()
