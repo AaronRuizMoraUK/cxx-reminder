@@ -126,18 +126,21 @@ void ThreeWayComparisonOperator()
         {
             if (m_a != rho.m_a)
             {
-                if (m_a > rho.m_a) return std::strong_ordering::greater;
-                else return std::strong_ordering::less;
+                return (m_a > rho.m_a)
+                    ? std::strong_ordering::greater
+                    : std::strong_ordering::less;
             }
             else if (m_b != rho.m_b)
             {
-                if (m_b > rho.m_b) return std::strong_ordering::greater;
-                else return std::strong_ordering::less;
+                return (m_b > rho.m_b)
+                    ? std::strong_ordering::greater
+                    : std::strong_ordering::less;
             }
             else if (m_c != rho.m_c)
             {
-                if (m_c > rho.m_c) return std::strong_ordering::greater;
-                else return std::strong_ordering::less;
+                return (m_c > rho.m_c)
+                    ? std::strong_ordering::greater
+                    : std::strong_ordering::less;
             }
             else
             {
