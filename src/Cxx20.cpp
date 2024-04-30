@@ -367,25 +367,42 @@ void Coroutines()
 // Macro definitions inside modules will not have any affect outside the module,
 // this can avoid unexpected behavior in the external code when including modules.
 //
-// Example of a basic module named 'print':
+// Example of a basic Module Interface (.ixx) where it's declaring a Module named 'print':
 //
 //      // Global Module Fragment
 //      module;
 //      #include <cstring>   // Old style headers and preprocessor directives are only allowed at this point.
-//      export module print; // Name of our module
+//      #include <string>
+// 
+//      export module print; // <-- Module declaration with a name
 //      
-//      // Module Preamble. Section importing other modules required for this module.
-//      // These are called "header units" and this module will need their compiled
-//      // Binary Module Interface to build this module.
+//      // Module Preamble
+//      // Section importing other modules required for this module.
+//      // These are called "header units" and their compiled Binary Module Interfaces are required
+//      // to build this module. Our program will have to build all the modules specified in this section.
 //      // C++ system headers can be imported and treated as modules, but depending on
-//      // the header some compilers might have issues with this.
-//      import <string>
+//      // the header some compilers might have issues building them as Binary Module Interfaces.
 //      import <iostream>
 //      
-//      // Module Content.
+//      // Module Content (declarations)
 //      // Notice the keyword 'export' to indicate what the module is exporting.
 //      // An export block can also be used to export multiple functions.
-//      export void print_msg(const std::string& msg)
+//      export void print_msg(const std::string& msg);
+// 
+// This would be the Module Implementation file (.cpp):
+// 
+//      // Global Module Fragment
+//      module;
+//      #include <cstring>
+//      #include <string>
+// 
+//      module print; // <-- Notice there is no 'export' keyword
+//      
+//      // Module Preamble
+//      import <iostream>
+//      
+//      // Module Content (implementations)
+//      void print_msg(const std::string& msg)
 //      {
 //           std::cout << "Msg: " << msg << std::endl;
 //      }
@@ -396,14 +413,14 @@ void Coroutines()
 // MSVC
 //      - Module files: (.ixx)
 //      - Binary Module Interface: (.ifc)
+//      - Module implementation files: (.cpp)
 //      - Compiled modules: (.o)
-//      - Implementation files: (.cpp)
 //
 // GCC
 //      - Module files - No specific extension, but in many examples: (.cc)
 //      - Binary Module Interface: (.gcm)
+//      - Module implementation files: (.cpp)
 //      - Compiled modules: (.o)
-//      - Implementation files: (.cpp)
 //
 // Clang
 //      - Module files: (.cppm)
@@ -412,19 +429,25 @@ void Coroutines()
 //            Example: If the file 'math.cppm' has 'export module my_math_module;' then the compiled module file needs
 //            to be 'my_math_module.pcm' and not 'math.pcm'. But it's a good practice to name the module file and
 //            the module the same.
+//      - Module implementation files: (.cpp)
 //      - Compiled modules: (.o)
-//      - Implementation files: (.cpp)
 //
 // Building programs using modules. Let's say we have the following files:
-// - ModuleA.ixx --> module file defining ModuleA
-// - ModuleB.ixx --> module file defining ModuleB, which imports and uses ModuleA
-// - main.cpp    --> Main program, which imports and uses ModuleB.
+//       - ModuleA.ixx --> module file defining ModuleA
+//       - ModuleA.cpp --> module file with ModuleA implementation
+//       - ModuleB.ixx --> module file defining ModuleB, which imports and uses ModuleA
+//       - ModuleB.cpp --> module file with ModuleB implementation, which imports and uses ModuleA
+//       - main.cpp    --> Main program, which imports and uses ModuleB.
 // 
 // In this scenario, this is the build order of this program:
-// 1. ModuleA.ixx --- compile interface ---> ModuleA.ifc
-// 2. ModuleB.ixx --- compile interface passing ModuleA.ifc ---> ModuleB.ifc
-// 3. main.cpp    --- compile passing ModuleB.ifc ---> main.o
-// 4. ModuleA.ifc --- compile ---> ModuleA.o
-// 5. ModuleB.ifc --- compile ---> ModuleB.o
-// 6. Link --- main.o, ModuleA.o, ModuleB.o ---> main.exe
+//       1. Pre-compile ModuleA interface: ModuleA.ixx ---> ModuleA.ifc
+//       2. Pre-compile ModuleB interface: ModuleB.ixx --- passing ModuleA.ifc ---> ModuleB.ifc
+//       3. Compile ModuleA:           ModuleA.cpp --- passing ModuleA.ifc ---> ModuleA.o
+//       4. Compile ModuleB:           ModuleB.cpp --- passing ModuleB.ifc, ModuleA.ifc ---> ModuleB.o
+//       5. Compile main:              main.cpp --- passing ModuleB.ifc ---> main.o
+//       6. Link program:              main.o, ModuleA.o, ModuleB.o ---> main.exe
+//
+// In a module interface file (.ixx), if you require another module, then you can add "import OtherModule;", but if
+// whoever import you also needs to be able to access stuff from other module, then you have to
+// use "export import OtherModule;" instead.
 //
