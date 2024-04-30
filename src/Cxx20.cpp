@@ -386,9 +386,15 @@ void Coroutines()
 //      
 //      // Module Content (declarations)
 //      // Notice the keyword 'export' to indicate what the module is exporting.
-//      // The export keyword works also with classes, templated classes, structs, namespaces, etc.
+//      // The export keyword works also with classes, class templates, variables, namespaces, etc.
 //      // Also, an export block can also be used to export multiple functions.
 //      export void print_msg(const std::string& msg);
+// 
+//      // NOTE: Names in .ixx will still be reachable in external code when using auto, even if export
+//      //       has not been specified. For example, a non-exported class Point and an exported function
+//      //       that returns a Point. External code will be able call the function and capture the return value
+//      //       using auto (and even call the class' members), but it won't compile if captured using Point type.
+//      //       But for best practices it would be better to mark the class Point as export too.
 // 
 // This would be the Module Implementation file (.cpp):
 // 
