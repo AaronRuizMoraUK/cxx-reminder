@@ -15,6 +15,32 @@
 // - Ranges (see Ranges.cpp)
 // --------------------------------------------------------------------------------
 
+// Helpers
+namespace
+{
+    template<typename T>
+    void PrintComparisons(const T& lho, const T& rho, const std::string& lhos, const std::string& rhos)
+    {
+        printf("%s >  %s : %s\n", lhos.c_str(), rhos.c_str(), (lho >  rho) ? "True" : "False");
+        printf("%s >= %s : %s\n", lhos.c_str(), rhos.c_str(), (lho >= rho) ? "True" : "False");
+        printf("%s == %s : %s\n", lhos.c_str(), rhos.c_str(), (lho == rho) ? "True" : "False");
+        printf("%s != %s : %s\n", lhos.c_str(), rhos.c_str(), (lho != rho) ? "True" : "False");
+        printf("%s <  %s : %s\n", lhos.c_str(), rhos.c_str(), (lho <  rho) ? "True" : "False");
+        printf("%s <= %s : %s\n", lhos.c_str(), rhos.c_str(), (lho <= rho) ? "True" : "False");
+    }
+
+    template<typename T>
+    void Print3WayComparisons(const T& threeWayComp, const std::string& lhos, const std::string& rhos)
+    {
+        printf("(%s <=> %s) >  0 : %s\n", lhos.c_str(), rhos.c_str(), threeWayComp >  0 ? "True" : "False");
+        printf("(%s <=> %s) >= 0 : %s\n", lhos.c_str(), rhos.c_str(), threeWayComp >= 0 ? "True" : "False");
+        printf("(%s <=> %s) == 0 : %s\n", lhos.c_str(), rhos.c_str(), threeWayComp == 0 ? "True" : "False");
+        printf("(%s <=> %s) != 0 : %s\n", lhos.c_str(), rhos.c_str(), threeWayComp != 0 ? "True" : "False");
+        printf("(%s <=> %s) <  0 : %s\n", lhos.c_str(), rhos.c_str(), threeWayComp <  0 ? "True" : "False");
+        printf("(%s <=> %s) <= 0 : %s\n", lhos.c_str(), rhos.c_str(), threeWayComp <= 0 ? "True" : "False");
+    }
+}
+
 // --------------------------------------------------------------------------------
 // Three way comparison operator (<=>)
 // --------------------------------------------------------------------------------
@@ -40,12 +66,7 @@ void ThreeWayComparisonOperator()
     // - std::partial_ordering: Type whose values are incomparable and <, ==, > all may return false. For example comparing a float value with NaN.
 
     // Int <=> comparison operator returns std::strong_ordering
-    printf("n1 >  n2 : %s\n", (resultInt >  0) ? "True" : "False");
-    printf("n1 >= n2 : %s\n", (resultInt >= 0) ? "True" : "False");
-    printf("n1 == n2 : %s\n", (resultInt == 0) ? "True" : "False");
-    printf("n1 != n2 : %s\n", (resultInt != 0) ? "True" : "False");
-    printf("n1 <  n2 : %s\n", (resultInt <  0) ? "True" : "False");
-    printf("n1 <= n2 : %s\n", (resultInt <= 0) ? "True" : "False");
+    Print3WayComparisons(resultInt, "n1", "n2");
     printf("\n");
 
     // By default std::string <=> comparison operator returns std::strong_ordering
@@ -53,15 +74,7 @@ void ThreeWayComparisonOperator()
     const std::string s2 = "HELLO";
     printf("s1 = %s\n", s1.c_str());
     printf("s2 = %s\n", s2.c_str());
-
-    auto resultString = (s1 <=> s2);
-    
-    printf("s1 >  s2 : %s\n", (resultString >  0) ? "True" : "False");
-    printf("s1 >= s2 : %s\n", (resultString >= 0) ? "True" : "False");
-    printf("s1 == s2 : %s\n", (resultString == 0) ? "True" : "False");
-    printf("s1 != s2 : %s\n", (resultString != 0) ? "True" : "False");
-    printf("s1 <  s2 : %s\n", (resultString <  0) ? "True" : "False");
-    printf("s1 <= s2 : %s\n", (resultString <= 0) ? "True" : "False");
+    Print3WayComparisons(s1 <=> s2, "s1", "s2");
     printf("\n");
 
     // Example implementing default <=> operator, which means
@@ -85,23 +98,17 @@ void ThreeWayComparisonOperator()
         int m_c = 3;
     };
 
-    const Item a(1, 0, 0);
-    const Item b(2, 0, 0);
-    printf("a = %s\n", a.ToString().c_str());
-    printf("b = %s\n", b.ToString().c_str());
-
     // Table of how compiler can deduce comparison operators >,>=,<=,< using <=>
     // - a >  b  --->  (a <=> b) >  0
     // - a >= b  --->  (a <=> b) >= 0
     // - a <  b  --->  (a <=> b) <  0
     // - a <= b  --->  (a <=> b) <= 0
 
-    printf("a >  b : %s\n", (a >  b) ? "True" : "False");
-    printf("a >= b : %s\n", (a >= b) ? "True" : "False");
-    printf("a == b : %s\n", (a == b) ? "True" : "False");
-    printf("a != b : %s\n", (a != b) ? "True" : "False");
-    printf("a <  b : %s\n", (a <  b) ? "True" : "False");
-    printf("a <= b : %s\n", (a <= b) ? "True" : "False");
+    const Item a(1, 0, 0);
+    const Item b(2, 0, 0);
+    printf("a = %s\n", a.ToString().c_str());
+    printf("b = %s\n", b.ToString().c_str());
+    PrintComparisons(a, b, "a", "b");
     printf("\n");
 
     // Same Item class with custom <=> comparison operator.
@@ -159,13 +166,64 @@ void ThreeWayComparisonOperator()
     const ItemCustom3WayCmpOp bc(2, 0, 0);
     printf("ac = %s\n", ac.ToString().c_str());
     printf("bc = %s\n", bc.ToString().c_str());
+    PrintComparisons(ac, bc, "ac", "bc");
+    printf("\n");
 
-    printf("ac >  bc : %s\n", (ac >  bc) ? "True" : "False");
-    printf("ac >= bc : %s\n", (ac >= bc) ? "True" : "False");
-    printf("ac == bc : %s\n", (ac == bc) ? "True" : "False");
-    printf("ac != bc : %s\n", (ac != bc) ? "True" : "False");
-    printf("ac <  bc : %s\n", (ac <  bc) ? "True" : "False");
-    printf("ac <= bc : %s\n", (ac <= bc) ? "True" : "False");
+    // Example of a string class with a custom comparison (by length),
+    // which means the type of ordering is weak, as two strings might
+    // be equivalent (same length) but not equal (different strings).
+    class StringWeakCmp
+    {
+    public:
+        StringWeakCmp() = default;
+        StringWeakCmp(std::string str) : m_str(str) {}
+
+        std::weak_ordering operator<=>(const StringWeakCmp& rho) const
+        {
+            const auto lhoLength = m_str.length();
+            const auto rhoLength = rho.m_str.length();
+
+            if (lhoLength > rhoLength)
+            {
+                return std::weak_ordering::greater;
+            }
+            else if (lhoLength < rhoLength)
+            {
+                return std::weak_ordering::less;
+            }
+            else
+            {
+                return std::weak_ordering::equivalent;
+            }
+        }
+
+        // Since <=> is custom, we need to define == operator. Compiler will deduce != from it.
+        bool operator==(const StringWeakCmp& rho) const
+        {
+            return m_str.length() == rho.m_str.length();
+        }
+
+        const std::string& Get() const
+        {
+            return m_str;
+        }
+
+    private:
+        std::string m_str;
+    };
+
+    const StringWeakCmp s1c("Dog");
+    const StringWeakCmp s2c("Fog");
+    printf("s1c = %s (size %zd)\n", s1c.Get().c_str(), s1c.Get().length());
+    printf("s2c = %s (size %zd)\n", s2c.Get().c_str(), s2c.Get().length());
+    PrintComparisons(s1c, s2c, "s1c", "s2c");
+    printf("\n");
+
+    const StringWeakCmp s3c("Hello");
+    const StringWeakCmp s4c("Fog");
+    printf("s3c = %s (size %zd)\n", s3c.Get().c_str(), s3c.Get().length());
+    printf("s4c = %s (size %zd)\n", s4c.Get().c_str(), s4c.Get().length());
+    PrintComparisons(s3c, s2c, "s4c", "s4c");
     printf("\n");
 }
 
