@@ -1,6 +1,11 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.28)
 
 project(cxx-reminder)
+
+# Use C++20 standard
+set(CMAKE_CXX_STANDARD 20)
+
+add_subdirectory(Modules)
 
 set(SOURCE_FILE_LIST
     src/main.cpp
@@ -18,6 +23,4 @@ set(SOURCE_FILE_LIST
 
 add_executable(main ${SOURCE_FILE_LIST})
 
-# Use C++ 20 standard
-set_property(TARGET main PROPERTY CXX_STANDARD 20)
-set_property(TARGET main PROPERTY CXX_STANDARD_REQUIRED ON)
+target_link_libraries(main MathLib)

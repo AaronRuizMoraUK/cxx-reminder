@@ -44,6 +44,7 @@ void TraitsConcepts();
 void ThreeWayComparisonOperator();
 void Concepts();
 void Coroutines();
+void Modules();
 
 void Ranges();
 void RangeProjections();
@@ -104,6 +105,7 @@ int main(int argc, char* argsv[])
     ThreeWayComparisonOperator();
     Concepts();
     Coroutines();
+    Modules();
 
     // C++20 Ranges
     Ranges();

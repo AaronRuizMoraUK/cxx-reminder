@@ -725,3 +725,18 @@ void Coroutines()
 //
 // This way, code can do "import math;" but the won't be able to import the parts.
 // Partitions are useful to isolate how the module is subdivided.
+
+import Math;
+
+void Modules()
+{
+    printf("\n");
+
+    auto max = Math::Max(52, 36);
+    auto min = Math::Min(52, 36);
+
+    auto degrees = Math::RadiansToDegrees(Math::Pi);
+    auto radians= Math::DegressToRadians(180.0f);
+
+    printf("\n");
+}
