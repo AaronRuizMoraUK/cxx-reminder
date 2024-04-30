@@ -5,6 +5,7 @@
 #include <iostream>
 #include <ranges>
 
+// Helpers
 namespace
 {
     struct Point

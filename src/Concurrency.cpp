@@ -6,6 +6,7 @@
 #include <future>
 #include <numeric>
 
+// Helpers
 namespace
 {
     std::string ThreadIdToString(const std::thread::id& id)
