@@ -41,6 +41,7 @@ void StringStreams();
 void Traits();
 void TraitsConcepts();
 
+void ThreeWayComparisonOperator();
 void Concepts();
 void Coroutines();
 
@@ -100,6 +101,7 @@ int main(int argc, char* argsv[])
     TraitsConcepts();
 
     // C++20
+    ThreeWayComparisonOperator();
     Concepts();
     Coroutines();
 

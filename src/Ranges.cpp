@@ -33,7 +33,7 @@ namespace
         }
     }
 
-    // Overload Print function for Ranges. Required to pass the type it contain,
+    // Overload Print function for Ranges. Required to specify the type the range contains,
     // for example Print<int>(range).
     // 
     // NOTE: For ranges it cannot use "const T&" because some range views
@@ -44,6 +44,7 @@ namespace
     // reference, and then iterated as (possibly-modifiable) lvalues.
     //
     // Article with a more detailed explanation: https://quuxplusone.github.io/blog/2023/08/13/non-const-iterable-ranges/
+    //
     template<typename U, std::ranges::range T>
     void Print(T&& range)
     {

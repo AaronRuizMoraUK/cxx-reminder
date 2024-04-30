@@ -1,12 +1,173 @@
 #include <iostream>
 #include <cstdio>
+#include <format>
 
 // --------------------------------------------------------------------------------
 // Link to C++20 new features cheat-sheet
 //
 // https://github.com/AaronRuizMoraUK/modern-cpp-features/blob/master/CPP20.md
-//
+// 
+// C++20 features covered:
+// - Three way comparison operator
+// - Concepts
+// - Coroutines
+// - Modules
+// - Ranges (see Ranges.cpp)
 // --------------------------------------------------------------------------------
+
+// --------------------------------------------------------------------------------
+// Three way comparison operator (<=>)
+// --------------------------------------------------------------------------------
+
+void ThreeWayComparisonOperator()
+{
+    const int n1 = 5;
+    const int n2 = 5;
+    printf("n1 = %d\n", n1);
+    printf("n2 = %d\n", n2);
+
+    // The result of a three way comparison is a type whose value is ONLY comparable with 0.
+    // The main point of providing an implementation for <=> is that the compiler
+    // will deduce the other comparison operators >,>=,<=,< automatically. This simplifies
+    // code maintenance as all the others operators are deduced.
+    // If <=> operator is defaulted ('= default;') the ==,!= operators will also be deduced, 
+    // but custom implementations will only generate >,>=,<=,< and not ==,!=.
+    auto resultInt = (n1 <=> n2);
+
+    // Possible types returned by three way operator:
+    // - std::strong_ordering: Type whose values being equal also mean they are indistinguishable (absolute equality).
+    // - std::weak_ordering: Type whose values can be considered equivalent but are not equal. For example strings "Hello" and "HELLO".
+    // - std::partial_ordering: Type whose values are incomparable and <, ==, > all may return false. For example comparing a float value with NaN.
+
+    // Int <=> comparison operator returns std::strong_ordering
+    printf("n1 >  n2 : %s\n", (resultInt >  0) ? "True" : "False");
+    printf("n1 >= n2 : %s\n", (resultInt >= 0) ? "True" : "False");
+    printf("n1 == n2 : %s\n", (resultInt == 0) ? "True" : "False");
+    printf("n1 != n2 : %s\n", (resultInt != 0) ? "True" : "False");
+    printf("n1 <  n2 : %s\n", (resultInt <  0) ? "True" : "False");
+    printf("n1 <= n2 : %s\n", (resultInt <= 0) ? "True" : "False");
+    printf("\n");
+
+    // By default std::string <=> comparison operator returns std::strong_ordering
+    const std::string s1 = "Hello";
+    const std::string s2 = "HELLO";
+    printf("s1 = %s\n", s1.c_str());
+    printf("s2 = %s\n", s2.c_str());
+
+    auto resultString = (s1 <=> s2);
+    
+    printf("s1 >  s2 : %s\n", (resultString >  0) ? "True" : "False");
+    printf("s1 >= s2 : %s\n", (resultString >= 0) ? "True" : "False");
+    printf("s1 == s2 : %s\n", (resultString == 0) ? "True" : "False");
+    printf("s1 != s2 : %s\n", (resultString != 0) ? "True" : "False");
+    printf("s1 <  s2 : %s\n", (resultString <  0) ? "True" : "False");
+    printf("s1 <= s2 : %s\n", (resultString <= 0) ? "True" : "False");
+    printf("\n");
+
+    // Example implementing default <=> operator, which means
+    // it can deduce >,>=,<=,<,==,!= operators
+    class Item
+    {
+    public:
+        Item() = default;
+        Item(int a, int b, int c) : m_a(a), m_b(b), m_c(c) {}
+
+        auto operator<=>(const Item& rho) const = default;
+
+        std::string ToString() const
+        {
+            return std::format("({},{},{})", m_a, m_b, m_c);
+        }
+
+    private:
+        int m_a = 1;
+        int m_b = 2;
+        int m_c = 3;
+    };
+
+    const Item a(1, 0, 0);
+    const Item b(2, 0, 0);
+    printf("a = %s\n", a.ToString().c_str());
+    printf("b = %s\n", b.ToString().c_str());
+
+    // Table of how compiler can deduce comparison operators >,>=,<=,< using <=>
+    // - a >  b  --->  (a <=> b) >  0
+    // - a >= b  --->  (a <=> b) >= 0
+    // - a <  b  --->  (a <=> b) <  0
+    // - a <= b  --->  (a <=> b) <= 0
+
+    printf("a >  b : %s\n", (a >  b) ? "True" : "False");
+    printf("a >= b : %s\n", (a >= b) ? "True" : "False");
+    printf("a == b : %s\n", (a == b) ? "True" : "False");
+    printf("a != b : %s\n", (a != b) ? "True" : "False");
+    printf("a <  b : %s\n", (a <  b) ? "True" : "False");
+    printf("a <= b : %s\n", (a <= b) ? "True" : "False");
+    printf("\n");
+
+    // Same Item class with custom <=> comparison operator.
+    class ItemCustom3WayCmpOp
+    {
+    public:
+        ItemCustom3WayCmpOp() = default;
+        ItemCustom3WayCmpOp(int a, int b, int c) : m_a(a), m_b(b), m_c(c) {}
+
+        // Since our comparison is based on integers and integer comparison type
+        // is strong_ordering, then our return value is also strong_ordering.
+        // If this was, for example, float, then the default type for floats is partial_ordering
+        // since it has to deal with NaNs.
+        std::strong_ordering operator<=>(const ItemCustom3WayCmpOp& rho) const
+        {
+            if (m_a != rho.m_a)
+            {
+                if (m_a > rho.m_a) return std::strong_ordering::greater;
+                else return std::strong_ordering::less;
+            }
+            else if (m_b != rho.m_b)
+            {
+                if (m_b > rho.m_b) return std::strong_ordering::greater;
+                else return std::strong_ordering::less;
+            }
+            else if (m_c != rho.m_c)
+            {
+                if (m_c > rho.m_c) return std::strong_ordering::greater;
+                else return std::strong_ordering::less;
+            }
+            else
+            {
+                return std::strong_ordering::equal;
+            }
+        }
+
+        // Since <=> is custom, we need to define == operator. Compiler will deduce != from it.
+        bool operator==(const ItemCustom3WayCmpOp& rho) const
+        {
+            return m_a == rho.m_a && m_b == rho.m_b && m_c == rho.m_c;
+        }
+
+        std::string ToString() const
+        {
+            return std::format("({},{},{})", m_a, m_b, m_c);
+        }
+
+    private:
+        int m_a = 1;
+        int m_b = 2;
+        int m_c = 3;
+    };
+
+    const ItemCustom3WayCmpOp ac(1, 0, 0);
+    const ItemCustom3WayCmpOp bc(2, 0, 0);
+    printf("ac = %s\n", ac.ToString().c_str());
+    printf("bc = %s\n", bc.ToString().c_str());
+
+    printf("ac >  bc : %s\n", (ac >  bc) ? "True" : "False");
+    printf("ac >= bc : %s\n", (ac >= bc) ? "True" : "False");
+    printf("ac == bc : %s\n", (ac == bc) ? "True" : "False");
+    printf("ac != bc : %s\n", (ac != bc) ? "True" : "False");
+    printf("ac <  bc : %s\n", (ac <  bc) ? "True" : "False");
+    printf("ac <= bc : %s\n", (ac <= bc) ? "True" : "False");
+    printf("\n");
+}
 
 // --------------------------------------------------------------------------------
 // Concepts
@@ -371,8 +532,7 @@ void Coroutines()
 //
 //      // Global Module Fragment
 //      module;
-//      #include <cstring>   // Old style headers and preprocessor directives are only allowed at this point.
-//      #include <string>
+//      #include <string>   // Old style headers and preprocessor directives are only allowed at this point.
 // 
 //      export module print; // <-- Module declaration with a name
 //      
