@@ -386,7 +386,8 @@ void Coroutines()
 //      
 //      // Module Content (declarations)
 //      // Notice the keyword 'export' to indicate what the module is exporting.
-//      // An export block can also be used to export multiple functions.
+//      // The export keyword works also with classes, templated classes, structs, namespaces, etc.
+//      // Also, an export block can also be used to export multiple functions.
 //      export void print_msg(const std::string& msg);
 // 
 // This would be the Module Implementation file (.cpp):
@@ -406,7 +407,7 @@ void Coroutines()
 //      {
 //           std::cout << "Msg: " << msg << std::endl;
 //      }
-// 
+
 // Module file extensions convention unfortunately changes per compiler, although parameters
 // can be passed to the compiler to change it:
 // 
@@ -415,6 +416,9 @@ void Coroutines()
 //      - Binary Module Interface: (.ifc)
 //      - Module implementation files: (.cpp)
 //      - Compiled modules: (.o)
+//      - In Visual Studio, apart from being setup to use C++20, remember to set in project properties
+//        "C/C++ > General > Scan Sources for Module Dependencies" to Yes. This will first scan all the files
+//        for modules dependencies to build the dependency graph so modules are built in the right order.
 //
 // GCC
 //      - Module files - No specific extension, but in many examples: (.cc)
@@ -442,12 +446,49 @@ void Coroutines()
 // In this scenario, this is the build order of this program:
 //       1. Pre-compile ModuleA interface: ModuleA.ixx ---> ModuleA.ifc
 //       2. Pre-compile ModuleB interface: ModuleB.ixx --- passing ModuleA.ifc ---> ModuleB.ifc
-//       3. Compile ModuleA:           ModuleA.cpp --- passing ModuleA.ifc ---> ModuleA.o
-//       4. Compile ModuleB:           ModuleB.cpp --- passing ModuleB.ifc, ModuleA.ifc ---> ModuleB.o
-//       5. Compile main:              main.cpp --- passing ModuleB.ifc ---> main.o
-//       6. Link program:              main.o, ModuleA.o, ModuleB.o ---> main.exe
-//
+//       3. Compile ModuleA:               ModuleA.cpp --- passing ModuleA.ifc ---> ModuleA.o
+//       4. Compile ModuleB:               ModuleB.cpp --- passing ModuleB.ifc, ModuleA.ifc ---> ModuleB.o
+//       5. Compile main:                  main.cpp --- passing ModuleB.ifc ---> main.o
+//       6. Link program:                  main.o, ModuleA.o, ModuleB.o ---> main.exe
+
+// Submodules
 // In a module interface file (.ixx), if you require another module, then you can add "import OtherModule;", but if
-// whoever import you also needs to be able to access stuff from other module, then you have to
+// whoever imports you also needs to be able to access stuff from other module, then you have to
 // use "export import OtherModule;" instead.
+// 
+// This can be used for having modules that it's only a collection of other modules, for example:
 //
+//      module;
+//      export module math;
+//
+//      export import math.add_sub;  // Submodule. Defined in another file math.add_sub.ixx
+//      export import math.mult_div; // Submodule. Defined in another file math.mult_div.ixx
+// 
+//      // NOTE: The dot is just part of the module's name, there is no hierarchy or accessors here.
+//
+// So code could choose to "import math;" to import everything, or particular modules they only need, such as "import math.add_sub;"
+// Submodules are useful to give flexibility deciding what functionality to import.
+
+// Partitions
+// If you still want to split your module but not allow others to import the submodules, then partitions can be used:
+//
+//      module;
+//      export module math;
+//
+//      export import :add_sub;  // Module partition. Defined in another file math-add_sub.ixx
+//      export import :mult_div; // Module partition. Defined in another file math-mult_div.ixx
+//
+// Then in math-add_sub.ixx:
+// 
+//      module;
+//      export module math:add_sub;
+//      ...
+//
+// Then in math-mult_div.ixx:
+// 
+//      module;
+//      export module math:mult_div;
+//      ...
+//
+// This way, code can do "import math;" but the won't be able to import the parts.
+// Partitions are useful to isolate how the module is subdivided.
