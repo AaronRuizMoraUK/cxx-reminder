@@ -148,6 +148,9 @@ void ThreeWayComparisonOperator()
         // Since <=> is custom, we need to define == operator. Compiler will deduce != from it.
         bool operator==(const ItemCustom3WayCmpOp& rho) const
         {
+            // Tip: if calculating == were not trivial, this could simply call <=> like this:
+            // return (*this <=> rho) == std::strong_ordering::equal;
+
             return m_a == rho.m_a && m_b == rho.m_b && m_c == rho.m_c;
         }
 
@@ -200,6 +203,9 @@ void ThreeWayComparisonOperator()
         // Since <=> is custom, we need to define == operator. Compiler will deduce != from it.
         bool operator==(const StringWeakCmp& rho) const
         {
+            // Tip: if calculating == were not trivial, this could simply call <=> like this:
+            // return (*this <=> rho) == std::weak_ordering::equivalent;
+
             return m_str.length() == rho.m_str.length();
         }
 
