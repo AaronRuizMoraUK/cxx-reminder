@@ -147,7 +147,7 @@ void Concepts()
 // When a coroutine is paused, its state (variables, parameters, execution point, etc.)
 // is saved in heap memory. Then with the use of a handle it can be resumed later.
 // 
-// Note that coroutines do not run concurrently, they still use the stack in such way that:
+// Note that coroutines do not run concurrently, they still use the stack so:
 // - When paused, the coroutine is removed from stack and its state is stored in heap memory.
 // - When resumed, the coroutine is added to the stack and its execution is resumed from where it was left off.
 //
@@ -176,7 +176,7 @@ void Concepts()
 template<typename T>
 struct Promise;
 
-// Coroutine type with the minimum requirements, managing the coroutine handle.
+// Coroutine type with the minimum requirements. It manages the coroutine handle.
 struct CoroutineType
 {
     // It's required to declare a type named exactly 'promise_type'.
@@ -264,7 +264,7 @@ struct Promise
 
 // What makes functions a coroutine is two things:
 // 1. It uses at least one coroutine keyword: co_await, co_yield or co_return.
-// 2. The return type is a coroutine type (uses coroutine infrastructure).
+// 2. The return type is a coroutine type (it uses the coroutine infrastructure).
 CoroutineType func1()
 {
     printf("Doing first thing...\n");
@@ -277,9 +277,9 @@ CoroutineType func1()
     co_return 0;
 }
 
-// Generates numbers indefinitely.
+// This coroutine generates numbers indefinitely.
 // This is a common usage of coroutines, the coroutine is like a number generator
-// and each time the function is called it'll generate the next number.
+// and each time the function is resumed it'll generate the next number.
 CoroutineType func2()
 {
     int start = 1;
