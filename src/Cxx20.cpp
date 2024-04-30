@@ -347,3 +347,84 @@ void Coroutines()
 // --------------------------------------------------------------------------------
 // Modules
 // --------------------------------------------------------------------------------
+
+// Modules is a new compilation model for C++ to replace header files (.h).
+// 
+// One of the main advantages of modules is that a module can decide what
+// to expose externally or not, improving encapsulation.
+// 
+// Also, unlike headers, modules won't be compiled each time its included by different
+// cpp files. First, modules are compiled into binary, then that binary is used by any
+// cpp that imports it. This can improve compilation speed significantly. Each module
+// is compiled independently into an object file (translation unit).
+//
+// Another advantage of modules is that the import order doesn't matter, because the
+// module is available in binary format and it's going to be included where needed.
+// But this also means that modules need to be compiled in order, which can be a headache
+// if building manually by command line, but the use of build tools and IDEs should
+// take care of this for us.
+//
+// Macro definitions inside modules will not have any affect outside the module,
+// this can avoid unexpected behavior in the external code when including modules.
+//
+// Example of a basic module named 'print':
+//
+//      // Global Module Fragment
+//      module;
+//      #include <cstring>   // Old style headers and preprocessor directives are only allowed at this point.
+//      export module print; // Name of our module
+//      
+//      // Module Preamble. Section importing other modules required for this module.
+//      // These are called "header units" and this module will need their compiled
+//      // Binary Module Interface to build this module.
+//      // C++ system headers can be imported and treated as modules, but depending on
+//      // the header some compilers might have issues with this.
+//      import <string>
+//      import <iostream>
+//      
+//      // Module Content.
+//      // Notice the keyword 'export' to indicate what the module is exporting.
+//      // An export block can also be used to export multiple functions.
+//      export void print_msg(const std::string& msg)
+//      {
+//           std::cout << "Msg: " << msg << std::endl;
+//      }
+// 
+// Module file extensions convention unfortunately changes per compiler, although parameters
+// can be passed to the compiler to change it:
+// 
+// MSVC
+//      - Module files: (.ixx)
+//      - Binary Module Interface: (.ifc)
+//      - Compiled modules: (.o)
+//      - Implementation files: (.cpp)
+//
+// GCC
+//      - Module files - No specific extension, but in many examples: (.cc)
+//      - Binary Module Interface: (.gcm)
+//      - Compiled modules: (.o)
+//      - Implementation files: (.cpp)
+//
+// Clang
+//      - Module files: (.cppm)
+//      - Binary Module Interface: (.pcm)
+//          - Clang expects the .pcm filename to be the same as the name of the module indicated inside the .cppm file.
+//            Example: If the file 'math.cppm' has 'export module my_math_module;' then the compiled module file needs
+//            to be 'my_math_module.pcm' and not 'math.pcm'. But it's a good practice to name the module file and
+//            the module the same.
+//      - Compiled modules: (.o)
+//      - Implementation files: (.cpp)
+//
+// Building programs using modules. Let's say we have the following files:
+// - ModuleA.ixx --> module file defining ModuleA
+// - ModuleB.ixx --> module file defining ModuleB, which imports and uses ModuleA
+// - main.cpp    --> Main program, which imports and uses ModuleB.
+// 
+// In this scenario, this is the build order of this program:
+// 1. ModuleA.ixx --- compile interface ---> ModuleA.ifc
+// 2. ModuleB.ixx --- compile interface passing ModuleA.ifc ---> ModuleB.ifc
+// 3. main.cpp    --- compile passing ModuleB.ifc ---> main.o
+// 4. ModuleA.ifc --- compile ---> ModuleA.o
+// 5. ModuleB.ifc --- compile ---> ModuleB.o
+// 6. Link --- main.o, ModuleA.o, ModuleB.o ---> main.exe
+//
