@@ -13,6 +13,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # CMake 3.28 provides CMAKE_CXX_SCAN_FOR_MODULES, 
 # but this enables the property on each source file and not in the project.
 # IntelliSense seems to only work when the property is enabled in the project.
+#
+# CMake issue: https://gitlab.kitware.com/cmake/cmake/-/issues/25947
+# CMake fix Milestone 3.29.3: https://gitlab.kitware.com/cmake/cmake/-/merge_requests/9471
 set(CMAKE_CXX_SCAN_FOR_MODULES ON)
 
 project(cxx-reminder)
