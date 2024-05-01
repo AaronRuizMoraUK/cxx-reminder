@@ -723,7 +723,7 @@ void Coroutines()
 //      export module math:mult_div;
 //      ...
 //
-// This way, code can do "import math;" but the won't be able to import the parts.
+// This way "import math;" will work, but they won't be able to import the partitions.
 // Partitions are useful to isolate how the module is subdivided.
 
 import Math;

@@ -36,3 +36,6 @@ set(SOURCE_FILE_LIST
 add_executable(main ${SOURCE_FILE_LIST})
 
 target_link_libraries(main MathLib)
+
+# Set main as the default project in Visual Studio
+set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT main)
