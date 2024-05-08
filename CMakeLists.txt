@@ -31,7 +31,7 @@ file(GLOB_RECURSE SOURCE_FILES
     
 source_group(TREE "${CMAKE_SOURCE_DIR}" FILES ${SOURCE_FILES})
 
-add_executable(main README.md ${SOURCE_FILES})
+add_executable(main .gitignore README.md ${SOURCE_FILES})
 
 target_link_libraries(main MathLib)
 
