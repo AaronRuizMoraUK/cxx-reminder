@@ -73,6 +73,7 @@ void File()
 // ----------------
 
 #include <fstream>
+#include <sstream>
 
 void FileStreams()
 {
@@ -113,6 +114,12 @@ void FileStreams()
     if (std::ifstream inFile("FileStreamExample.txt", std::ifstream::in); // std::ifstream::ate can be used to open pointing at the end of the file
         inFile.is_open())
     {
+        std::ostringstream stringStream;
+        stringStream << inFile.rdbuf(); // Reads entire file
+        printf("%s\n", stringStream.str().c_str());
+
+        inFile.seekg(std::streamoff(0), std::ios_base::beg);
+
         char line[256] = {0};
         while (inFile.getline(line, sizeof(line)-1))
         {
