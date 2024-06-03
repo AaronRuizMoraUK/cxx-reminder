@@ -64,7 +64,7 @@ void StandardStreamObjects()
 // 
 // C
 // sprintf
-// scanf
+// sscanf
 // ------------------------------------
 
 #include <sstream>

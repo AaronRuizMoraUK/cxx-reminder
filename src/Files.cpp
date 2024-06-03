@@ -14,8 +14,7 @@ void File()
     printf("--------------------------------\n");
 
     // Create and write a file
-    // Flags:
-    // - "a" can be used to append at the end
+    // - Adding "a" will append at the end
     // - Adding "b" will write/read to a binary file instead of text
     if (FILE* outFile = nullptr;
         fopen_s(&outFile, "FileExample.txt", "w") == 0)
@@ -82,7 +81,6 @@ void FileStreams()
     printf("--------------------------------\n");
 
     // Create and write a file
-    // Flags:
     // - std::ofstream::app can be used to append at the end
     // - std::ofstream::binary can be used to write to a binary file instead of text
     if (std::ofstream outFile("FileStreamExample.txt", std::ofstream::out);
