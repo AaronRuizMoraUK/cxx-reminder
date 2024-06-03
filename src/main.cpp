@@ -52,6 +52,9 @@ void RangeViews();
 void RangeViewCompositionAndPipeOperator();
 void RangeFactories();
 
+void Trees();
+void BinarySearchTree();
+
 int main(int argc, char* argsv[])
 {
     std::printf("C++ Reminder\n\n");
@@ -113,6 +116,10 @@ int main(int argc, char* argsv[])
     RangeViews();
     RangeViewCompositionAndPipeOperator();
     RangeFactories();
+
+    // Trees
+    Trees();
+    BinarySearchTree();
 
     return 0;
 }
