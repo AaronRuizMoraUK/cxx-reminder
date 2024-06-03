@@ -756,7 +756,7 @@ void UnorderedSets()
     insertedElementPair = set.insert(Type(6)); // pair.bool is true as it's already inserted.
     insertedElementPair = set.emplace(9);
 
-    // Search is O(log n), which is good.
+    // Search is O(1), which is great.
     MyUnorderedSet::iterator findIt = set.find(Type(3));
 
     std::printf("Unordered Set: ");
@@ -791,7 +791,7 @@ void UnorderedSets()
     MyUnorderedMultiset::iterator insertedElementIt = multiset.insert(Type(6));
     insertedElementIt = multiset.emplace(9);
 
-    // Search is O(log n), which is good.
+    // Search is O(1), which is great.
     // If there are several elements with the requested key in the container, any of them may be returned.
     MyUnorderedMultiset::iterator findIt2 = multiset.find(Type(3));
 
@@ -869,7 +869,7 @@ void UnorderedMaps()
 
     insertedElementPair = map.insert_or_assign(Type(6), "six_override"); // Same as insert, but it does assign the new value if key is found.
 
-    // Search is O(log n), which is good.
+    // Search is O(1), which is great.
     map[Type(9)] = "nine"; // [] operator does an insertion of default value (empty string) if key does not exist. Then it gets assigned "nine".
     std::string value = map.at(Type(6)); // If key is not found, an exception of type std::out_of_range is thrown. Better use find instead.
     MyUnordereMap::iterator findIt = map.find(Type(6));
@@ -921,7 +921,7 @@ void UnorderedMaps()
     insertedElemenIt = multimap.insert({ Type(6), "six_2" });
     insertedElemenIt = multimap.emplace(Type(6), "six_3");
 
-    // Search is O(log n), which is good.
+    // Search is O(1), which is great.
     // If there are several elements with the requested key in the container, any of them may be returned.
     MyUnorderedMultimap::iterator findIt2 = multimap.find(Type(6));
 
