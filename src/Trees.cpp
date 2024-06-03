@@ -170,7 +170,8 @@ void Trees()
 // --------------------------------------------------------------------------------
 // Binary Search Tree (BST): Binary tree that is sorted.
 // 
-// For fast node insertion, removal and search: O(log n)
+// For fast node insertion, removal and search: 
+// O(log n) best case, O(n) worst case if very unbalanced.
 // --------------------------------------------------------------------------------
 
 struct NodeBST
@@ -480,6 +481,34 @@ void BinarySearchTree()
     delete treeRoot;
     std::printf("\n");
 }
+
+// --------------------------------------------------------------------------------
+// Self Balancing Binary Search Tree
+// 
+// Binary search tree that keeps its height small after insertions and deletions.
+// By keeping it balance it guarantees insertion, deletion and search at O(log n).
+// 
+// There are different BST that implement self-balancing techniques:
+// - AVL Tree (https://algorithmtutor.com/Data-Structures/Tree/AVL-Trees/)
+// - Red-black Tree (https://algorithmtutor.com/Data-Structures/Tree/Red-Black-Trees/)
+// - AA Tree (https://en.wikipedia.org/wiki/AA_tree)
+// --------------------------------------------------------------------------------
+
+// --------------------------------------------------------------------------------
+// B-Tree
+// 
+// Generalization of BST where each node can hold more than 1 keys (data). In B-Trees,
+// a node with n keys have n+1 children nodes. The benefit of B-Trees is that each node
+// holds more information, this reduces the height of the tree, and in case memory
+// is an issue and cannot fit the entire tree in memory, it might be able to keep one node
+// in memory and do operations with it.
+// 
+// For more details on B-Tress see https://algorithmtutor.com/Data-Structures/Tree/B-Trees/
+// 
+// B-Tree implementations:
+// - 2-3 Tree (https://algorithmtutor.com/Data-Structures/Tree/2-3-Trees/)
+// - 2-3-4 Tree (https://algorithmtutor.com/Data-Structures/Tree/2-3-4-Trees/)
+// --------------------------------------------------------------------------------
 
 // --------------------------------------------------------------------------------
 // Trie. Aka digital tree, radix tree or prefix tree.
