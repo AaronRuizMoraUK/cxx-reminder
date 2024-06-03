@@ -437,7 +437,7 @@ void AdjacentInclusiveScan_AdjacentExclusiveScan()
 
     // Accumulator is created with the first element transformed, not specified in parameters.
     // Then transforms in order each element of the range (starting from the second) with the previous element and then
-    // then does another operation with the accumulator, each operation is stored in both the element and the accumulator.
+    // it does another operation with the accumulator, each operation is stored in both the element and the accumulator.
     // No default operators.
 
     adjacent_inclusive_scan(numbers.cbegin(), numbers.cend(), transformedNumbers.begin(),
@@ -513,7 +513,7 @@ void AdjacentFind()
 // Indexes Viewed: 2
 // Accumulator: NO
 // Operation: Transform
-void AdjacentTransform() // A better for the actual operation that is std::adjacent_difference
+void AdjacentTransform() // A better name for the actual operation that is std::adjacent_difference
 {
     const std::vector<int> numbers = { 2, 6, 1, 5, 34, 12, 65, 21 };
     std::printf("Input: ");
