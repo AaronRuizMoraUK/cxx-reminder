@@ -189,158 +189,16 @@ struct NodeBST
 
     // Insert node into tree, it will keep it sorted. O(log n)
     // Returns the new node.
-    NodeBST* Insert(int data)
-    {
-        if (data > m_nodeData)
-        {
-            if (m_right)
-            {
-                return m_right->Insert(data);
-            }
-            else
-            {
-                m_right = new NodeBST(data, this);
-                return m_right;
-            }
-        }
-        else
-        {
-            if (m_left)
-            {
-                return m_left->Insert(data);
-            }
-            else
-            {
-                m_left = new NodeBST(data, this);
-                return m_left;
-            }
-        }
-    }
+    NodeBST* Insert(int data);
 
     // Find node into tree. O(log n)
     // Returns null if the node doesn't exist.
-    NodeBST* Find(int data)
-    {
-        if (data > m_nodeData)
-        {
-            return (m_right)
-                ? m_right->Find(data)
-                : nullptr;
-        }
-        else if(data < m_nodeData)
-        {
-            return (m_left)
-                ? m_left->Find(data)
-                : nullptr;
-        }
-        else
-        {
-            return this;
-        }
-    }
+    NodeBST* Find(int data);
 
     // Delete node from tree, it will keep it sorted. O(log n)
-    // Returns the parent of the deleted node or root.
+    // Returns the parent of the deleted node or new root.
     // Returns null if the node doesn't exist.
-    NodeBST* Delete(int data)
-    {
-        if (data > m_nodeData)
-        {
-            return (m_right)
-                ? m_right->Delete(data)
-                : nullptr;
-        }
-        else if (data < m_nodeData)
-        {
-            return (m_left)
-                ? m_left->Delete(data)
-                : nullptr;
-        }
-        else
-        {
-            // Case 1: Leaf node. Simple case, delete node and take care parent's link.
-            if (IsLeaf())
-            {
-                NodeBST* parent = m_parent;
-                if (IsRoot())
-                {
-                    delete this;
-                    return nullptr; // No more nodes in the tree
-                }
-                else if (this == parent->m_left)
-                {
-                    parent->m_left = nullptr;
-                    delete this;
-                    return parent;
-                }
-                else
-                {
-                    parent->m_right = nullptr;
-                    delete this;
-                    return parent;
-                }
-            }
-            // Case 2: One child. Simple case, delete node and connect child to parent.
-            else if (m_right == nullptr)
-            {
-                NodeBST* parent = m_parent;
-                NodeBST* child = m_left;
-                if (IsRoot())
-                {
-                    delete this;
-                    return child;
-                }
-                else if (this == parent->m_left)
-                {
-                    parent->m_left = child;
-                    delete this;
-                    return parent;
-                }
-                else
-                {
-                    parent->m_right = child;
-                    delete this;
-                    return parent;
-                }
-            }
-            else if (m_left == nullptr)
-            {
-                NodeBST* parent = m_parent;
-                NodeBST* child = m_right;
-                if (IsRoot())
-                {
-                    delete this;
-                    return child;
-                }
-                else if (this == parent->m_left)
-                {
-                    parent->m_left = child;
-                    delete this;
-                    return parent;
-                }
-                else
-                {
-                    parent->m_right = child;
-                    delete this;
-                    return parent;
-                }
-            }
-            // Case 3: Two children. Replace with max value node under left child, 
-            // then delete that node (which will fall under case 1 or 2)
-            else
-            {
-                NodeBST* parent = m_parent;
-                NodeBST* maxInLeftChild = m_left;
-                while (maxInLeftChild->m_right != nullptr)
-                {
-                    maxInLeftChild = maxInLeftChild->m_right;
-                }
-                m_nodeData = maxInLeftChild->m_nodeData;
-                maxInLeftChild->Delete(m_nodeData);
-                return parent;
-            }
-        }
-    }
+    NodeBST* Delete(int data);
 
     bool IsRoot() const
     {
@@ -358,6 +216,162 @@ struct NodeBST
     NodeBST* m_left = nullptr;
     NodeBST* m_right = nullptr;
 };
+
+
+NodeBST* NodeBST::Insert(int data)
+{
+    if (data > m_nodeData)
+    {
+        if (m_right)
+        {
+            return m_right->Insert(data);
+        }
+        else
+        {
+            m_right = new NodeBST(data, this);
+            return m_right;
+        }
+    }
+    else
+    {
+        if (m_left)
+        {
+            return m_left->Insert(data);
+        }
+        else
+        {
+            m_left = new NodeBST(data, this);
+            return m_left;
+        }
+    }
+}
+
+NodeBST* NodeBST::Find(int data)
+{
+    if (data > m_nodeData)
+    {
+        return (m_right)
+            ? m_right->Find(data)
+            : nullptr;
+    }
+    else if (data < m_nodeData)
+    {
+        return (m_left)
+            ? m_left->Find(data)
+            : nullptr;
+    }
+    else
+    {
+        return this;
+    }
+}
+
+NodeBST* NodeBST::Delete(int data)
+{
+    if (data > m_nodeData)
+    {
+        return (m_right)
+            ? m_right->Delete(data)
+            : nullptr;
+    }
+    else if (data < m_nodeData)
+    {
+        return (m_left)
+            ? m_left->Delete(data)
+            : nullptr;
+    }
+    else
+    {
+        // Case 1: Leaf node. Simple case, delete node and take care of parent's link.
+        if (IsLeaf())
+        {
+            NodeBST* parent = m_parent;
+            if (IsRoot())
+            {
+                delete this;
+                return nullptr; // No more nodes in the tree
+            }
+            else if (this == parent->m_left)
+            {
+                parent->m_left = nullptr;
+                delete this;
+                return parent;
+            }
+            else
+            {
+                parent->m_right = nullptr;
+                delete this;
+                return parent;
+            }
+        }
+        // Case 2: One child. Simple case, delete node and connect child to parent.
+        else if (m_right == nullptr)
+        {
+            NodeBST* parent = m_parent;
+            NodeBST* child = m_left;
+            if (IsRoot())
+            {
+                delete this;
+                return child; // Child is new root
+            }
+            else if (this == parent->m_left)
+            {
+                parent->m_left = child;
+                delete this;
+                return parent;
+            }
+            else
+            {
+                parent->m_right = child;
+                delete this;
+                return parent;
+            }
+        }
+        else if (m_left == nullptr)
+        {
+            NodeBST* parent = m_parent;
+            NodeBST* child = m_right;
+            if (IsRoot())
+            {
+                delete this;
+                return child; // Child is new root
+            }
+            else if (this == parent->m_left)
+            {
+                parent->m_left = child;
+                delete this;
+                return parent;
+            }
+            else
+            {
+                parent->m_right = child;
+                delete this;
+                return parent;
+            }
+        }
+        // Case 3: Two children. Replace with max value node under left child, 
+        // then delete that node (which will fall under case 1 or 2)
+        else
+        { 
+            NodeBST* maxInLeftChild = m_left;
+            while (maxInLeftChild->m_right != nullptr)
+            {
+                maxInLeftChild = maxInLeftChild->m_right;
+            }
+            m_nodeData = maxInLeftChild->m_nodeData;
+            maxInLeftChild->Delete(m_nodeData);
+
+            if (IsRoot())
+            {
+                return this; // This node with a new value is now root
+            }
+            else
+            {
+                return m_parent;
+            }
+        }
+    }
+}
 
 void TraverseInOrder(const NodeBST* node)
 {
