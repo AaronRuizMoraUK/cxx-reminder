@@ -55,6 +55,11 @@ void RangeFactories();
 void Trees();
 void BinarySearchTree();
 
+void GraphsAsEdgeList();
+void GraphsAsAdjacencyMatrix();
+void GraphsAsAdjacencyList();
+void GraphsTraverse();
+
 int main(int argc, char* argsv[])
 {
     std::printf("C++ Reminder\n\n");
@@ -120,6 +125,12 @@ int main(int argc, char* argsv[])
     // Trees
     Trees();
     BinarySearchTree();
+
+    // Graphs
+    GraphsAsEdgeList();
+    GraphsAsAdjacencyMatrix();
+    GraphsAsAdjacencyList();
+    GraphsTraverse();
 
     return 0;
 }
