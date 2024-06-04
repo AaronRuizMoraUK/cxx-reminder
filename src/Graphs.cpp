@@ -534,18 +534,37 @@ void GraphsTraverse()
 // --------------------------------------------------------------------------------
 // Dijkstra algorithm
 // 
-// Given a weighted graph (only with positive values) and a source vertex, find the
-// shortest paths from that source vertex to all the other vertices in the graph.
+// Given a weighted graph (only with positive values) and a source vertex, it finds
+// the shortest paths from that source vertex to all the other vertices in the graph.
+// 
+// It can also be used to find the shortest path to a specific destination node,
+// by terminating the algorithm once the shortest path to the destination node is known.
 // 
 // https://www.geeksforgeeks.org/dijkstras-shortest-path-algorithm-greedy-algo-7/
+// https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
+// --------------------------------------------------------------------------------
+
+// --------------------------------------------------------------------------------
+// A*
+// 
+// A* is a modification of Dijkstra’s Algorithm that is optimized for a single goal.
+// A* achieves better performance by using heuristics to guide its search.
+// A* cost function that tries to minimize is f(n) = g(n) + h(n), where g(n) is the cost from
+// origin to the next node in the path (as in Dijkstra) and h(n) is a heuristic value
+// (typically precomputed) that estimates the cost from the next node to the single goal.
+// 
+// https://theory.stanford.edu/~amitp/GameProgramming/AStarComparison.html
+// https://www.geeksforgeeks.org/a-search-algorithm/
+// https://www.redblobgames.com/pathfinding/a-star/introduction.html
+// https://en.wikipedia.org/wiki/A*_search_algorithm
 // --------------------------------------------------------------------------------
 
 // --------------------------------------------------------------------------------
 // Bellman-Ford algorithm
 // 
 // Given a weighted graph (with either positive or negative values) and a source
-// vertex, find the shortest paths from that vertex to all the other vertices in
-// the graph.
+// vertex, it finds the shortest paths from that vertex to all the other vertices
+// in the graph.
 // 
 // https://www.geeksforgeeks.org/bellman-ford-algorithm-dp-23/
 // --------------------------------------------------------------------------------
@@ -557,8 +576,4 @@ void GraphsTraverse()
 // shortest paths between all pairs of nodes.
 // 
 // https://www.geeksforgeeks.org/floyd-warshall-algorithm-dp-16/
-// --------------------------------------------------------------------------------
-
-// --------------------------------------------------------------------------------
-// A*
 // --------------------------------------------------------------------------------
