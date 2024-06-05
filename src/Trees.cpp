@@ -381,17 +381,11 @@ void TraverseInOrder(const NodeBST* node)
         return;
     }
 
-    if (node->m_left)
-    {
-        TraverseInOrder(node->m_left);
-    }
+    TraverseInOrder(node->m_left);
 
     std::printf("%d ", node->m_nodeData);
 
-    if (node->m_right)
-    {
-        TraverseInOrder(node->m_right);
-    }
+    TraverseInOrder(node->m_right);
 }
 
 void TraverseDepthFirst_NonRecursive(const NodeBST* node)
