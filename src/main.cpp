@@ -17,6 +17,7 @@ void LockMultipleMutex();
 void SharedMutex();
 void Atomics();
 void ConditionalVariables();
+void Semaphores();
 void PromiseAndFuture();
 
 void Reduce();
@@ -83,6 +84,7 @@ int main(int argc, char* argsv[])
     SharedMutex();
     Atomics();
     ConditionalVariables();
+    Semaphores();
     PromiseAndFuture();
 
     // Algorithms

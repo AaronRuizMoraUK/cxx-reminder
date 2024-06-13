@@ -2,6 +2,7 @@
 #include <functional>
 #include <thread>
 #include <mutex>
+#include <semaphore>
 #include <shared_mutex>
 #include <future>
 #include <numeric>
@@ -487,6 +488,48 @@ void ConditionalVariables()
         t4.join();
         printf("\n");
     }
+}
+
+// Semaphores
+//
+// Synchronization primitive used to control access to a common resource.
+// They help in preventing race conditions and ensure that multiple threads
+// or processes do not access critical sections of the code simultaneously.
+// 
+// Types of Semaphores
+//   Counting Semaphores: Allow multiple threads to access a finite number of resources.
+//   Binary Semaphores:  Same as mutex, ensuring exclusive access to a resource by a single thread at a time.
+//
+// Semaphores are acquired and release. When acquiring it'll block until resources are available.
+
+constexpr int SemaphoreMaxResources = 3;
+std::counting_semaphore<SemaphoreMaxResources> SemaphoreCounter(SemaphoreMaxResources);
+
+// std::binary_semaphore is alias to std::counting_semaphore<1>
+
+void MainSemaphores(int id)
+{
+    SemaphoreCounter.acquire();
+
+    printf("Thread %d is working...\n", id);
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    printf("Thread %d has finished\n", id);
+
+    SemaphoreCounter.release();
+}
+
+void Semaphores()
+{
+    std::vector<std::thread> threads;
+    for (int i = 0; i < 10; ++i) {
+        threads.emplace_back(MainSemaphores, i);
+    }
+
+    for (auto& t : threads) {
+        t.join();
+    }
+
+    printf("\n");
 }
 
 // Promise and Future
