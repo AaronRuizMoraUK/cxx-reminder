@@ -244,7 +244,9 @@ void LinkedLists()
     // ---------------------------
     // Singly Linked List (std::forward_list)
     // Same as std::list but it can only travel forward and add/delete at front (not back) of the list.
-    // It uses less memory per element as it only has 1 pointer to the next element.
+    // 
+    // + It uses less memory per element as it only has 1 pointer to the next element.
+    // - It doesn't provide size() function.
     //
     // Access: O(1) at the beginning, O(n) in the middle/end
     // Search: O(n)
