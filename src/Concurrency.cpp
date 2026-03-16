@@ -244,7 +244,7 @@ void LockMultipleMutex()
         CheckIsLocked(mutex2).m_locked ? "YES" : "NO",
         CheckIsLocked(mutex3).m_locked ? "YES" : "NO");
 
-    // Method 3: Using std::unique_lock with std::adopt_lock and then std::lock.
+    // Method 3: Using std::unique_lock with std::defer_lock and then std::lock.
     // 
     // Similar to method 2, but first using unique_lock with std::defer_lock to
     // indicate "do not acquire ownership of the mutex", then call std::lock to lock
